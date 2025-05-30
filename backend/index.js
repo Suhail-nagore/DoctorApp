@@ -35,7 +35,7 @@ app.use(cookieParser());
 app.use(cors());
 
 // Serve static files from the "public" folder
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "dist")));
 
 // API Routes
 app.use("/api/", patientRouter);
@@ -50,6 +50,9 @@ app.use("/admin/api/", adminRouter);
 app.use("/api/reports", reportRouter); // Route for generating reports
 app.use("/api/", operatorRouter);
 
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "dist", "index.html"));
+});
 // Handle non-API routes by serving the frontend
 // app.use("/*", (req, res) => {
 //   if (!req.originalUrl.startsWith("/api")) {
