@@ -40,8 +40,8 @@ const AdminLogin = async (req, res) => {
 }
 
 // const createAdmin = async () => {
-//     const username = 'doctor'; // your admin username
-//     const password = 'admin123'; // your admin password
+//     const username = 'Aman'; // your admin username
+//     const password = 'Amansir@242'; // your admin password
 
 //     // Hash the password before saving it to the database
 //     const hashedPassword = await bcrypt.hash(password, 10);

@@ -24,7 +24,7 @@ const PORT = 5000;
 
 // MongoDB Connection
 mongoose
-  .connect("mongodb+srv://kirand:mlXR0xgZ3eESFlwV@cluster0.9sqi4.mongodb.net/DoctorApp")
+  .connect("mongodb+srv://dramansinghal2004:9vSxsK2vv2DGQfha@cluster0.fo989yl.mongodb.net/DoctorApp")
   .then(() => console.log("MongoDB connected"))
   .catch((error) => console.error("Error connecting to MongoDB:", error));
 

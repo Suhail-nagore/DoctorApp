@@ -1,9 +1,11 @@
 {
   "dependencies": {
+    "-": "^0.0.1",
     "bcryptjs": "^2.4.3",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "express": "^4.21.2",
+    "f": "^1.4.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.8.4",
     "node-schedule": "^2.1.1",
@@ -16,6 +18,8 @@
   "description": "Ultrasound Company Billing System",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
