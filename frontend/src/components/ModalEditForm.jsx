@@ -103,7 +103,7 @@ const ModalEditForm = ({ isOpen, onClose, onSubmit, initialData }) => {
 
       try {
         const response = await axios.get(
-          `http://localhost:5000/api/subcategory?category=${formData.category}`
+          `https://www.delightdiagnostics.in/api/subcategory?category=${formData.category}`
         );
         setFilteredSubcategories(response.data.subcategories); // Update subcategories based on category
       } catch (error) {

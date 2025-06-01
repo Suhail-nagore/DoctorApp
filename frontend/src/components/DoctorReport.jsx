@@ -28,7 +28,7 @@ const DoctorReport = () => {
   useEffect(() => {
     const fetchDoctors = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/doctors");
+        const response = await fetch("https://www.delightdiagnostics.in/api/doctors");
         const data = await response.json();
         setDoctors(data.doctors || []);
       } catch (error) {
@@ -56,7 +56,7 @@ const DoctorReport = () => {
     try {
       // Fetch patients report
       const reportResponse = await fetch(
-        `http://localhost:5000/api/patientsReport?doctorId=${selectedDoctor}&startDate=${startDate.toISOString()}&endDate=${endDate.toISOString()}`
+        `https://www.delightdiagnostics.in/api/patientsReport?doctorId=${selectedDoctor}&startDate=${startDate.toISOString()}&endDate=${endDate.toISOString()}`
       );
       const reportData = await reportResponse.json();
   
@@ -64,7 +64,7 @@ const DoctorReport = () => {
       setPatients(reportData.patients || []);
   
       // Fetch doctor data
-      const doctorResponse = await fetch(`http://localhost:5000/api/doctor/${selectedDoctor}`);
+      const doctorResponse = await fetch(`https://www.delightdiagnostics.in/api/doctor/${selectedDoctor}`);
       const doctorData = await doctorResponse.json();
   
       // Update doctor discount

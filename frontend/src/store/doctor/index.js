@@ -8,7 +8,7 @@ export const fetchDoctors = createAsyncThunk(
   'doctors/fetchDoctors',
   async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/doctors');
+      const response = await axios.get('https://www.delightdiagnostics.in/api/doctors');
       return response.data.doctors; // Assuming the data you need is in response.data
     } catch (error) {
       console.error('Error fetching doctors:', error);
@@ -22,7 +22,7 @@ export const fetchDoctorById = createAsyncThunk(
   'doctors/fetchDoctorById',
   async (doctorId) => {
     try {
-      const response = await axios.get(`http://localhost:5000/api/doctor/${doctorId}`);
+      const response = await axios.get(`https://www.delightdiagnostics.in/api/doctor/${doctorId}`);
       return response.data.doctor; // Assuming the data you need is the doctor's details
     } catch (error) {
       console.error('Error fetching doctor by ID:', error);

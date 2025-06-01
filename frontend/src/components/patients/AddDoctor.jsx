@@ -30,7 +30,7 @@ const AddDoctorModal = ({ isOpen, onClose }) => {
             phoneNo: formData.phoneNo || '0', // Set phone number to '0' if empty
         };
         try {
-            const response = await axios.post('http://localhost:5000/api/doctor/add', updatedFormData);
+            const response = await axios.post('https://www.delightdiagnostics.in/api/doctor/add', updatedFormData);
             setFormData({
                 name: '',
                 phoneNo: '',

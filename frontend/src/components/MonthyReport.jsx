@@ -67,7 +67,7 @@ const [message, setMessage] = useState("");   // Store message
 
     const fetchDoctors = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/doctors");
+        const response = await fetch("https://www.delightdiagnostics.in/api/doctors");
         const data = await response.json();
         setDoctors(data.doctors || []);
       } catch (error) {

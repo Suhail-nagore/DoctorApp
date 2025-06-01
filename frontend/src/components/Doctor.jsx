@@ -22,7 +22,7 @@ const Doctor = () => {
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this doctor?")) {
       try {
-        await axios.delete(`http://localhost:5000/api/doctor/${id}`);
+        await axios.delete(`https://www.delightdiagnostics.in/api/doctor/${id}`);
         alert("Doctor deleted successfully!");
         dispatch(fetchDoctors());
       } catch (error) {

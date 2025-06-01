@@ -12,7 +12,7 @@ const Login = () => {
     e.preventDefault(); // Prevent form submission
 
     try {
-      const response = await axios.post('http://localhost:5000/api/login', {
+      const response = await axios.post('https://www.delightdiagnostics.in/api/login', {
         username,
         password,
       });

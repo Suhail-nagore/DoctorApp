@@ -11,7 +11,7 @@ function CheckAuth({ children }) {
     // Check authentication on component mount
     const checkAuth = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/checkauth", {
+        const response = await axios.get("https://www.delightdiagnostics.in/api/checkauth", {
           headers: {
             Authorization: "Bearer " + localStorage.getItem("token"),
           },

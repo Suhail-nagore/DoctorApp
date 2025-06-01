@@ -35,7 +35,7 @@ export const login = (username, password) => async (dispatch) => {
   // alert(username)
   dispatch(loginRequest());
   try {
-    const response = await axios.post('http://localhost:5000/admin/api/login', {
+    const response = await axios.post('https://www.delightdiagnostics.in/admin/api/login', {
       username:username,
       password:password
     },{

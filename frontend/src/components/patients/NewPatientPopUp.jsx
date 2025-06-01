@@ -27,7 +27,7 @@ const NewPatientPopUp = ({ setIsAddPatient, phoneNo }) => {
     };
 
     try {
-      const response = await axios.post('http://localhost:5000/api/patient/add', patientData);
+      const response = await axios.post('https://www.delightdiagnostics.in/api/patient/add', patientData);
 
       if (response.status === 200) {
         // Handle success (you can display a success message here or close the modal)

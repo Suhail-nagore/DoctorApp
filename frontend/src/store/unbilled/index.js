@@ -6,7 +6,7 @@ export const createUnbilled = createAsyncThunk(
   'unbilled/createUnbilled',
   async (formData, { rejectWithValue }) => {
     try {
-      const response = await axios.post('http://localhost:5000/api/createUnbilled', formData);
+      const response = await axios.post('https://www.delightdiagnostics.in/api/createUnbilled', formData);
       return response.data.unbilled;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || 'Failed to create unbilled record');
@@ -19,7 +19,7 @@ export const fetchUnbilledById = createAsyncThunk(
   'unbilled/fetchUnbilledById',
   async (orderId, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`http://localhost:5000/api/fetchUnbilledOrderById/${orderId}`);
+      const response = await axios.get(`https://www.delightdiagnostics.in/api/fetchUnbilledOrderById/${orderId}`);
       return response.data.order;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || 'Failed to fetch unbilled record');
@@ -32,7 +32,7 @@ export const fetchAllUnbilled = createAsyncThunk(
   'unbilled/fetchAllUnbilled',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get('http://localhost:5000/api/fetchAllUnbilledOrder');
+      const response = await axios.get('https://www.delightdiagnostics.in/api/fetchAllUnbilledOrder');
       return response.data.orders;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || 'Failed to fetch unbilled records');
@@ -45,7 +45,7 @@ export const deleteUnbilled = createAsyncThunk(
   'unbilled/deleteUnbilled',
   async (orderId, { rejectWithValue }) => {
     try {
-      await axios.delete(`http://localhost:5000/api/unbilled/${orderId}`);
+      await axios.delete(`https://www.delightdiagnostics.in/api/unbilled/${orderId}`);
       return orderId;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || 'Failed to delete unbilled record');

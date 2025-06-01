@@ -29,7 +29,7 @@ const ChangePassword = () => {
     try {
       const token = localStorage.getItem('token');
       const response = await axios.put(
-        'http://localhost:5000/admin/api/change-password',
+        'https://www.delightdiagnostics.in/admin/api/change-password',
         {
           currentPassword: passwords.currentPassword,
           newPassword: passwords.newPassword
