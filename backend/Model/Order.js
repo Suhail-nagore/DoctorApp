@@ -59,8 +59,19 @@ const OrderSchema = new mongoose.Schema(
         paymentMode:{
             type : String,
             required : true 
-
         },
+
+
+        // extra fields for online+cash-Armaan Siddiqui
+        online: {
+            type: Number,
+            default: 0,
+        },
+        cash: {
+            type: Number,
+            default: 0,
+        },
+
         referralFee:{
             type : Number,
             required : true 

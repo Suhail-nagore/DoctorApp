@@ -36,11 +36,11 @@ const DoctorForm = () => {
       let response;
       if (doctorId) {
         // Update Doctor
-        response = await axios.put(`https://www.delightdiagnostics.in/api/doctor/${doctorId}`, formData);
+        response = await axios.put(`http://localhost:5000/api/doctor/${doctorId}`, formData);
         setMessage(response.data.message || 'Doctor updated successfully!');
       } else {
         // Add New Doctor
-        response = await axios.post('https://www.delightdiagnostics.in/api/doctor/add', formData);
+        response = await axios.post('http://localhost:5000/api/doctor/add', formData);
         setMessage(response.data.message || 'Doctor added successfully!');
         setFormData({
           name: '',

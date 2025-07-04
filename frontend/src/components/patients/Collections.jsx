@@ -17,6 +17,8 @@ const Collections = () => {
     dispatch(fetchAllOrders());
   }, [dispatch]);
 
+  // Enhanced hook for handling online + cash collections and splits
+  // Armaan Siddiqui
   useEffect(() => {
     if (allOrders && allOrders.length > 0) {
       const now = new Date();
@@ -42,15 +44,24 @@ const Collections = () => {
         return orderDate >= startOfDay && orderDate <= endOfDay;
       });
 
-      // Calculate totals
+      //Changes Calculate total logic for handling split(online+cash)-Armaan Siddiqui
       if (todayOrders.length > 0) {
-        const cashAmount = todayOrders
-          .filter((order) => order.paymentMode === "Cash")
-          .reduce((acc, order) => acc + order.finalPayment, 0);
+        let cashAmount = 0;
+        let onlineAmount = 0;
+        todayOrders.forEach((order) => {
+          if (order.paymentMode === "Cash") {
+            cashAmount += order.finalPayment;
+          } 
+          else if (order.paymentMode === "Online") {
+            onlineAmount += order.finalPayment;
+          }
 
-        const onlineAmount = todayOrders
-          .filter((order) => order.paymentMode === "Online")
-          .reduce((acc, order) => acc + order.finalPayment, 0);
+          // Added else if for online+cash mode handling - Armaan Siddiqui
+          else if (order.paymentMode === "Online + Cash") {
+            cashAmount += order.cash ?? 0;
+            onlineAmount += order.online ?? 0;
+          }
+        });
 
         const overallTotal = cashAmount + onlineAmount;
 
@@ -62,6 +73,8 @@ const Collections = () => {
       setTotals({ cashAmount: 0, onlineAmount: 0, overallTotal: 0 });
     }
   }, [allOrders]);
+
+
 
   if (ordersLoading) {
     return (

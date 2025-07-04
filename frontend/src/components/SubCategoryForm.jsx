@@ -22,7 +22,7 @@ const SubCategoryForm = () => {
 
   const fetchCategories = async () => {
     try {
-      const response = await axios.get('https://www.delightdiagnostics.in/api/categories');
+      const response = await axios.get('http://localhost:5000/api/categories');
       setCategories(response.data.categories || []);
     } catch (error) {
       console.error('Error fetching categories:', error);
@@ -31,7 +31,7 @@ const SubCategoryForm = () => {
 
   const fetchSubCategories = async () => {
     try {
-      const response = await axios.get('https://www.delightdiagnostics.in/api/subcategories');
+      const response = await axios.get('http://localhost:5000/api/subcategories');
       const subCategoriesData = response.data.Subcategories || [];
       setSubCategories(subCategoriesData);
       setFilteredSubCategories(subCategoriesData);
@@ -55,13 +55,13 @@ const SubCategoryForm = () => {
       if (editingSubCategory) {
         // Update existing subcategory
         response = await axios.put(
-          `https://www.delightdiagnostics.in/api/subcategory/${editingSubCategory._id}`,
+          `http://localhost:5000/api/subcategory/${editingSubCategory._id}`,
           formData
         );
         setMessage(response.data.message || 'Subcategory updated successfully!');
       } else {
         // Add new subcategory
-        response = await axios.post('https://www.delightdiagnostics.in/api/addSubCategory', formData);
+        response = await axios.post('http://localhost:5000/api/addSubCategory', formData);
         setMessage(response.data.message || 'Subcategory added successfully!');
       }
 
@@ -85,7 +85,7 @@ const SubCategoryForm = () => {
       return;
     }
     try {
-      await axios.delete(`https://www.delightdiagnostics.in/api/subcategory/${id}`);
+      await axios.delete(`http://localhost:5000/api/subcategory/${id}`);
       setMessage('Subcategory deleted successfully!');
       fetchSubCategories();
     } catch (error) {

@@ -8,7 +8,7 @@ export const fetchCategories = createAsyncThunk(
   'categories/fetchCategories',
   async () => {
     try {
-      const response = await axios.get('https://www.delightdiagnostics.in/api/categories');
+      const response = await axios.get('http://localhost:5000/api/categories');
       return response.data.categories; // Assuming the data you need is in response.data.categories
     } catch (error) {
       console.error('Error fetching categories:', error);

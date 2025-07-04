@@ -47,7 +47,7 @@ const AdminOrdersPage = () => {
   useEffect(() => {
     const fetchDoctors = async () => {
       try {
-        const response = await fetch("https://www.delightdiagnostics.in/api/doctors");
+        const response = await fetch("http://localhost:5000/api/doctors");
         const data = await response.json();
         setDoctors(data.doctors || []);
       } catch (error) {
@@ -108,7 +108,7 @@ const AdminOrdersPage = () => {
     const confirmation = window.confirm("Are you sure you want to delete this order?");
     if (confirmation) {
       try {
-        const response = await fetch(`https://www.delightdiagnostics.in/api/orders/${orderId}`, {
+        const response = await fetch(`http://localhost:5000/api/orders/${orderId}`, {
           method: "DELETE",
         });
   
@@ -131,7 +131,7 @@ const AdminOrdersPage = () => {
     if (confirmation) {
       try {
         for (let orderId of selectedOrders) {
-          const response = await fetch(`https://www.delightdiagnostics.in/api/orders/${orderId}`, {
+          const response = await fetch(`http://localhost:5000/api/orders/${orderId}`, {
             method: "DELETE",
           });
   

@@ -55,8 +55,8 @@ const PatientForm = () => {
   const [searchTermS, setSearchTermS] = useState("");
  
   
-    const location = useLocation();
-    const [filteredSubcategories, setFilteredSubcategories] = useState([]);
+  const location = useLocation();
+  const [filteredSubcategories, setFilteredSubcategories] = useState([]);
   const [formData, setFormData] = useState({
     phoneNo: "",
     name: "",
@@ -72,6 +72,15 @@ const PatientForm = () => {
     paymentMode:"",
     referralFee:""
   });
+
+  // special state for online+cash amount spitting - Armaan Siddiqui
+  const [splitPayments, setSplitPayments] = useState({
+    online: "",
+    cash: "",
+  });
+
+
+
   const selectedPatient = location.state?.patient;
   const NewphoneNo= location.state?.phoneNo;
   const filteredDoctors = doctors.filter((doctor) =>
@@ -125,7 +134,7 @@ const PatientForm = () => {
   
       try {
         const response = await axios.get(
-          `https://www.delightdiagnostics.in/api/subcategory?category=${formData.category}`
+          `http://localhost:5000/api/subcategory?category=${formData.category}`
         );
         setFilteredSubcategories(response.data.subcategories); // Update with actual key from API response
       } catch (error) {
@@ -232,12 +241,34 @@ const PatientForm = () => {
       toast.error("Please fill in all required fields");
       return;
     }
-  
+
+
+    // handle online+cash payment mode input validation- Armaan Siddiqui
+    if (formData.paymentMode === "Online + Cash") {
+      const online = parseFloat(splitPayments.online) || 0;
+      const cash = parseFloat(splitPayments.cash) || 0;
+      const total = parseFloat(formData.finalPayment) || 0;
+
+      if (online + cash !== total) {
+        toast.error("Online + Cash must add up to Final Payment.");
+        return;
+      }
+    }
+
     try {
-      const orderData = {
+      let orderData = {
         ...formData,
-        placedBy: operatorName // Add operator name to order data
-      };
+        placedBy: operatorName
+      }
+
+
+      // handle online+cash payment mode data payload prepration- Armaan Siddiqui
+      if (formData.paymentMode === "Online + Cash") {
+        orderData.online = parseFloat(splitPayments.online) || 0;
+        orderData.cash = parseFloat(splitPayments.cash) || 0;
+        orderData.total = parseFloat(formData.finalPayment) || 0;
+
+      }
 
       // First, handle adding new patient if isNewEntry is true
       if (isNewEntry) {
@@ -467,7 +498,7 @@ const PatientForm = () => {
       
 
           {/* Additional form fields */}
-       
+
             {/* Form fields for referredBy and category */}
             <div>
       <label htmlFor="referredBy" className="block text-sm font-medium text-gray-700">
@@ -755,30 +786,92 @@ const PatientForm = () => {
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-50"
                 required
               />
-              </div>
+            </div>
             
             <div>
-  <label htmlFor="finalPayment" className="block text-sm font-medium text-gray-700">
-    Payment Mode
-  </label>
-  <select
-    id="finalPayment"
-    name="finalPayment"
-    value={formData.paymentMode}
-    onChange={(e) => setFormData({ ...formData, paymentMode: e.target.value })}
-    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-50"
-    required
-  >
-    <option value="">Select Payment Mode</option>
-    <option value="Online">Online</option>
-    <option value="Cash">Cash</option>
-    <option value="Unbilled">Unbilled</option>
-  </select>
-</div>
+              <label htmlFor="finalPayment" className="block text-sm font-medium text-gray-700">
+                Payment Mode
+              </label>
+              <select
+                id="paymentMode"
+                name="paymentMode"
+                value={formData.paymentMode}
+                onChange={(e) => {
+                  const mode = e.target.value;
+                  setFormData({ ...formData, paymentMode: mode });
 
-
+                  // for Clearing fields if mode is not "Online + Cash" - Armaan Siddiqui
+                  if (mode !== "Online + Cash") {
+                    setSplitPayments({ online: "", cash: "" });
+                  }
+                }}
+                required
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
+              >
+                <option value="">Select Payment Mode</option>
+                <option value="Online">Online</option>
+                <option value="Cash">Cash</option>
+                <option value="Online + Cash">Online + Cash</option> {/* Added option for online+cash Armaan Siddiqui */}
+                <option value="Unbilled">Unbilled</option>
+              </select>
+            </div>
           </div>
-         
+          
+          
+          {/* Armaan Siddiqui */}
+          {/* Input fields for online + cash */}
+
+          {formData.paymentMode === "Online + Cash" && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+              {/*Online*/}
+              <div>
+                <label htmlFor="online" className="block text-sm font-medium text-gray-700">
+                  Online Payment
+                </label>
+                <input
+                  type="number"
+                  id="online"
+                  name="online"
+                  value={splitPayments.online}
+                  onChange={(e) => {
+                    const online = parseFloat(e.target.value) || 0;
+                    const total = parseFloat(formData.finalPayment) || 0;
+                    setSplitPayments({
+                      online: online,
+                      cash: Math.max(0, total - online)
+                    });
+                  }}
+                  min="0"
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
+                  required
+                />
+              </div>
+
+              {/*Cash*/}
+              <div>
+                <label htmlFor="cash" className="block text-sm font-medium text-gray-700">
+                  Cash Payment
+                </label>
+                <input
+                  type="number"
+                  id="cash"
+                  name="cash"
+                  value={splitPayments.cash}
+                  onChange={(e) => {
+                    const cash = parseFloat(e.target.value) || 0;
+                    const total = parseFloat(formData.finalPayment) || 0;
+                    setSplitPayments({
+                      cash: cash,
+                      online: Math.max(0, total - cash)
+                    });
+                  }}
+                  min="0"
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
+                  required
+                />
+              </div>
+            </div>
+          )}
   
           <button
             type="submit"

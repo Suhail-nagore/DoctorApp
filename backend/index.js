@@ -24,7 +24,8 @@ const PORT = 5000;
 
 // MongoDB Connection
 mongoose
-  .connect("mongodb+srv://dramansinghal2004:9vSxsK2vv2DGQfha@cluster0.fo989yl.mongodb.net/DoctorApp")
+  // .connect("mongodb+srv://dramansinghal2004:9vSxsK2vv2DGQfha@cluster0.fo989yl.mongodb.net/DoctorApp")
+  .connect("mongodb+srv://Armaan:t7URSBWhUrynDpIu@cluster0.pojwcqp.mongodb.net/Doctorapplication")
   .then(() => console.log("MongoDB connected"))
   .catch((error) => console.error("Error connecting to MongoDB:", error));
 
@@ -35,8 +36,8 @@ app.use(cookieParser());
 app.use(cors());
 
 // Serve static files from the "public" folder
-// app.use(express.static(path.join(__dirname, "public")));
-app.use(express.static(path.join(__dirname, "dist")));
+app.use(express.static(path.join(__dirname, "public")));
+// app.use(express.static(path.join(__dirname, "dist")));
 
 // API Routes
 app.use("/api/", patientRouter);
@@ -51,9 +52,9 @@ app.use("/admin/api/", adminRouter);
 app.use("/api/reports", reportRouter); // Route for generating reports
 app.use("/api/", operatorRouter);
 
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "dist", "index.html"));
-});
+// app.get("*", (req, res) => {
+//   res.sendFile(path.join(__dirname, "dist", "index.html"));
+// });
 
 // Handle non-API routes by serving the frontend
 // app.use("/*", (req, res) => {

@@ -6,7 +6,7 @@ export const placeOrder = createAsyncThunk(
   'order/placeOrder',
   async (formData, { rejectWithValue }) => {
     try {
-      const response = await axios.post('https://www.delightdiagnostics.in/api/placeOrder', formData);
+      const response = await axios.post('http://localhost:5000/api/placeOrder', formData);
       return response.data.order; // Assuming the response contains the order data or success message
     } catch (error) {
       console.error('Error placing order:', error);
@@ -20,7 +20,7 @@ export const fetchAllOrders = createAsyncThunk(
   'order/fetchAllOrders',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get('https://www.delightdiagnostics.in/api/fetchAllOrder');
+      const response = await axios.get('http://localhost:5000/api/fetchAllOrder');
       return response.data.orders; // Assuming the response contains the array of orders
     } catch (error) {
       console.error('Error fetching all orders:', error);
@@ -35,7 +35,7 @@ export const fetchOrdersByDate = createAsyncThunk(
   async ({ startDate, endDate }, { rejectWithValue }) => {
     try {
       const response = await axios.get(
-        `https://www.delightdiagnostics.in/api/ordersbydate?startDate=${startDate}&endDate=${endDate}`
+        `http://localhost:5000/api/ordersbydate?startDate=${startDate}&endDate=${endDate}`
       );
       return response.data.orders; // Assuming the response contains the array of filtered orders
     } catch (error) {
@@ -50,7 +50,7 @@ export const updateOrder = createAsyncThunk(
   'order/updateOrder',
   async ({ orderId, updatedData }, { rejectWithValue }) => {
     try {
-      const response = await axios.put(`https://www.delightdiagnostics.in/api/orders/${orderId}`, updatedData);
+      const response = await axios.put(`http://localhost:5000/api/orders/${orderId}`, updatedData);
       return response.data.order; // Assuming the response contains the updated order data
     } catch (error) {
       console.error('Error updating order:', error);

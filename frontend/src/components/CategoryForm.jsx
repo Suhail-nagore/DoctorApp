@@ -13,7 +13,7 @@ const CategoryForm = () => {
   // Fetch all categories
   const fetchCategories = async () => {
     try {
-      const response = await axios.get('https://www.delightdiagnostics.in/api/categories');
+      const response = await axios.get('http://localhost:5000/api/categories');
       setCategories(response.data.categories || []);
     } catch (error) {
       console.error('Error fetching categories:', error);
@@ -38,13 +38,13 @@ const CategoryForm = () => {
       if (editingCategory) {
         // Update existing category
         const response = await axios.put(
-          `https://www.delightdiagnostics.in/api/category/${editingCategory._id}`,
+          `http://localhost:5000/api/category/${editingCategory._id}`,
           formData
         );
         setMessage(response.data.message || 'Category updated successfully!');
       } else {
         // Add new category
-        const response = await axios.post('https://www.delightdiagnostics.in/api/addCategory', formData);
+        const response = await axios.post('http://localhost:5000/api/addCategory', formData);
         setMessage(response.data.message || 'Category added successfully!');
       }
 
@@ -68,7 +68,7 @@ const CategoryForm = () => {
       return;
     }
     try {
-      await axios.delete(`https://www.delightdiagnostics.in/api/category/${id}`);
+      await axios.delete(`http://localhost:5000/api/category/${id}`);
       setMessage('Category deleted successfully!');
       fetchCategories();
     } catch (error) {

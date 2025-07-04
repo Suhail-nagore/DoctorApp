@@ -40,7 +40,7 @@ const Unbilled = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const doctorsResponse = await axios.get("https://www.delightdiagnostics.in/api/doctors");
+        const doctorsResponse = await axios.get("http://localhost:5000/api/doctors");
         setDoctors(doctorsResponse.data.doctors || []);
         dispatch(fetchAllUnbilled());
       } catch (error) {
@@ -82,7 +82,7 @@ const Unbilled = () => {
         }
       } else {
         // If still unbilled, just update the unbilled record
-        await axios.put(`https://www.delightdiagnostics.in/api/unbilled/${orderId}`, formData);
+        await axios.put(`http://localhost:5000/api/unbilled/${orderId}`, formData);
         setEditOrderData(null);
         dispatch(fetchAllUnbilled());
         toast.success("Unbilled order updated successfully");

@@ -5,7 +5,7 @@ import axios from 'axios';
 export const fetchSubcategoryDetail = createAsyncThunk(
   'subcategory/fetchSubcategoryDetail',
   async (subcategoryId) => {
-    const response = await axios.get(`https://www.delightdiagnostics.in/api/subcategory/${subcategoryId}`);
+    const response = await axios.get(`http://localhost:5000/api/subcategory/${subcategoryId}`);
     return response.data.category; // Return the subcategory data
   }
 );

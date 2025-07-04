@@ -3,6 +3,8 @@ const Order = require('../Model/Order');
 const DoctorDB = require('../Model/Doctor');
 
 const PlaceOrder = async (req, res) => {
+  console.log("REQ BODY:", req.body);
+
   try {
     const {
       name,
@@ -19,6 +21,9 @@ const PlaceOrder = async (req, res) => {
       paymentMode,
       referralFee,
       placedBy,
+      //Added new fields for online+cash - Armaan Siddiqui
+      online = 0,
+      cash = 0, 
     } = req.body;
 
     // Get today's date in DDMMYYYY format
@@ -70,8 +75,12 @@ const PlaceOrder = async (req, res) => {
       discount,
       finalPayment,
       paymentMode,
+
       referralFee,
       placedBy,
+      //Added new fields for online+cash - Armaan Siddiqui
+      online,
+      cash,
     });
 
     // Save the order
