@@ -383,9 +383,8 @@ const ModalEditForms = ({ isOpen, onClose, onSubmit, initialData }) => {
 
               </select>
             </div>
-            {/* Form Fields for online + Cash- Armaan siddiqui */}
             {formData.paymentMode === "Online + Cash" && (
-              <>
+              <div>
                 <div>
                   <label htmlFor="online">Online Paid</label>
                   <input
@@ -394,7 +393,7 @@ const ModalEditForms = ({ isOpen, onClose, onSubmit, initialData }) => {
                     name="online"
                     value={formData.online || ""}
                     onChange={handleChange}
-                    className="..."
+                    className="mt-2 block w-full rounded-md border-2 border-gray-300 shadow-sm px-4 py-2 text-sm"
                   />
                 </div>
                 <div>
@@ -405,10 +404,10 @@ const ModalEditForms = ({ isOpen, onClose, onSubmit, initialData }) => {
                     name="cash"
                     value={formData.cash || ""}
                     onChange={handleChange}
-                    className="..."
+                    className="mt-2 block w-full rounded-md border-2 border-gray-300 shadow-sm px-4 py-2 text-sm"
                   />
                 </div>
-              </>
+              </div>
             )}
 
             {/* Referral Fee */}
