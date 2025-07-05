@@ -62,7 +62,7 @@ const OrderSchema = new mongoose.Schema(
         },
 
 
-        // extra fields for online+cash-Armaan Siddiqui
+        // extra fields for Online + Cash-Armaan Siddiqui
         online: {
             type: Number,
             default: 0,

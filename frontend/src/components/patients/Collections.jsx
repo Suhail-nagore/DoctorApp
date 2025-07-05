@@ -44,7 +44,7 @@ const Collections = () => {
         return orderDate >= startOfDay && orderDate <= endOfDay;
       });
 
-      //Changes Calculate total logic for handling split(online+cash)-Armaan Siddiqui
+      //Changes Calculate total logic for handling split(Online + Cash)-Armaan Siddiqui
       if (todayOrders.length > 0) {
         let cashAmount = 0;
         let onlineAmount = 0;
@@ -56,7 +56,7 @@ const Collections = () => {
             onlineAmount += order.finalPayment;
           }
 
-          // Added else if for online+cash mode handling - Armaan Siddiqui
+          // Added else if for Online + Cash mode handling - Armaan Siddiqui
           else if (order.paymentMode === "Online + Cash") {
             cashAmount += order.cash ?? 0;
             onlineAmount += order.online ?? 0;

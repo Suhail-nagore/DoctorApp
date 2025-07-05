@@ -21,7 +21,7 @@ const PlaceOrder = async (req, res) => {
       paymentMode,
       referralFee,
       placedBy,
-      //Added new fields for online+cash - Armaan Siddiqui
+      //Added new fields for Online + Cash - Armaan Siddiqui
       online = 0,
       cash = 0, 
     } = req.body;
@@ -78,7 +78,7 @@ const PlaceOrder = async (req, res) => {
 
       referralFee,
       placedBy,
-      //Added new fields for online+cash - Armaan Siddiqui
+      //Added new fields for Online + Cash - Armaan Siddiqui
       online,
       cash,
     });

@@ -32,6 +32,7 @@ const ModalEditForm = ({ isOpen, onClose, onSubmit, initialData }) => {
     discount: "",
     finalPayment: "",
     paymentMode: "",
+    
    
   });
 
@@ -51,6 +52,11 @@ const ModalEditForm = ({ isOpen, onClose, onSubmit, initialData }) => {
         discount: initialData.discount || "",
         finalPayment: initialData.finalPayment || "",
         paymentMode: initialData.paymentMode || "",
+
+        // add new fields- Armaan Siddiqui
+        online: initialData.online || "",
+        cash: initialData.cash || "",
+
       });
     }
   }, [initialData]);
@@ -60,11 +66,10 @@ const ModalEditForm = ({ isOpen, onClose, onSubmit, initialData }) => {
   useEffect(() => {
     if (isOpen) {
       dispatch(fetchDoctors());
-       dispatch(fetchCategories()); 
+      dispatch(fetchCategories()); 
     }
   }, [isOpen, dispatch]);
 
-  // Handle input change
   // Handle input change
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -75,23 +80,24 @@ const ModalEditForm = ({ isOpen, onClose, onSubmit, initialData }) => {
         ...prevState,
         [name]: value,
       };
-  
-      // If fees or discount change, recalculate finalPayment
-      if (name === "fees" || name === "discount") {
-        let fees = name === "fees" ? parseFloat(value) || 0 : parseFloat(updatedFormData.fees) || 0;
-        let discount = name === "discount" ? parseInt(value) || 0 : parseInt(updatedFormData.discount) || 0;
+
+      // Removed hard coded final payment calculation- Armaan Siddiqui
+      
+      // // If fees or discount change, recalculate finalPayment
+      // if (name === "fees" || name === "discount") {
+      //   let fees = name === "fees" ? parseFloat(value) || 0 : parseFloat(updatedFormData.fees) || 0;
+      //   let discount = name === "discount" ? parseInt(value) || 0 : parseInt(updatedFormData.discount) || 0;
 
   
-        // Update finalPayment after validation
-        updatedFormData.finalPayment = fees - discount;
-      }
+      //   // Update finalPayment after validation
+      //   updatedFormData.finalPayment = fees - discount;
+      // }
 
       
-  
-      return updatedFormData;
-    });
-  };
-  
+        return updatedFormData;
+      });
+    };
+    
   
 
   useEffect(() => {
@@ -127,7 +133,7 @@ const ModalEditForm = ({ isOpen, onClose, onSubmit, initialData }) => {
           setFormData((prevState) => ({
             ...prevState,
             fees: subcategory.price || '',
-            finalPayment: subcategory.price || '',
+            // finalPayment: subcategory.price || '',   removed wrong part - Armaan Siddiqui
             
           }));
         }
@@ -352,21 +358,53 @@ const ModalEditForm = ({ isOpen, onClose, onSubmit, initialData }) => {
   
             {/* Payment Mode */}
             <div>
-  <label htmlFor="paymentMode" className="block text-sm font-medium text-gray-700">
-    Payment Mode
-  </label>
-  <select
-    id="paymentMode"
-    name="paymentMode"
-    value={formData.paymentMode}
-    onChange={handleChange}
-    className="mt-2 block w-full rounded-md border-2 border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-4 py-2 text-sm"
-  >
-    <option value="">Select Payment Mode</option>
-    <option value="Cash">Cash</option>
-    <option value="Online">Online</option>
-  </select>
-</div>
+              <label htmlFor="paymentMode" className="block text-sm font-medium text-gray-700">
+                Payment Mode
+              </label>
+              <select
+                id="paymentMode"
+                name="paymentMode"
+                value={formData.paymentMode ||""}
+                onChange={handleChange}
+                className="mt-2 block w-full rounded-md border-2 border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-4 py-2 text-sm"
+              >
+                <option value="">Select Payment Mode</option>
+                <option value="Cash">Cash</option>
+                <option value="Online">Online</option>
+                <option value="Online + Cash">Online + Cash</option> {/* Online + cash option added- Armaan Siddiqui */}
+              </select>
+
+            </div>
+
+
+            {/* Adding fields for new feature online + cash mode -Armaan Siddiqui*/}
+            {formData.paymentMode === "Online + Cash" && (
+              <>
+                <div>
+                  <label htmlFor="online" className="block text-sm font-medium text-gray-700">Online Paid</label>
+                  <input
+                    type="number"
+                    id="online"
+                    name="online"
+                    value={formData.online || ""}
+                    onChange={handleChange}
+                    className="mt-2 block w-full rounded-md border-2 border-gray-300 shadow-sm px-4 py-2 text-sm"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="cash" className="block text-sm font-medium text-gray-700">Cash Paid</label>
+                  <input
+                    type="number"
+                    id="cash"
+                    name="cash"
+                    value={formData.cash || ""}
+                    onChange={handleChange}
+                    className="mt-2 block w-full rounded-md border-2 border-gray-300 shadow-sm px-4 py-2 text-sm"
+                  />
+                </div>
+              </>
+            )}
+
 
   
             {/* Referral Fee */}

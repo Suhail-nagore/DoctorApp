@@ -8,6 +8,7 @@ import ModalEditForm from './ModalEditForm';
 import { PDFDocument, rgb } from 'pdf-lib';
 import { StandardFonts } from 'pdf-lib';
 
+
 const PrintReport = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -93,8 +94,13 @@ const PrintReport = () => {
         { label: 'Referred By', value: "Dr. " + doctorDetails.name },
         { label: 'Fees', value: localOrderDetails.fees },
         localOrderDetails.discount > 0 && { label: 'Discount', value: localOrderDetails.discount },
-        { label: 'Final Payment', value: localOrderDetails.finalPayment },
+
+        //Added new fields to align with new logic and feature online + cash- Armaan Siddiqui
+        localOrderDetails.paymentMode === 'Online + Cash' && { label: 'Online Paid', value: localOrderDetails.online },
+        localOrderDetails.paymentMode === 'Online + Cash' && { label: 'Cash Paid', value: localOrderDetails.cash },
+        { label: 'Final Payment', value: finalAmount },
         { label: 'Payment Mode', value: localOrderDetails.paymentMode },
+
       ].filter(Boolean);
   
       const wrapText = (text, maxWidth, font, fontSize) => {
@@ -201,6 +207,27 @@ const PrintReport = () => {
     );
   }
 
+
+
+
+  // Adding a function to calsulate final amount- Armaan Siddiqui
+  const getFinalAmount = (order) => {
+    const { paymentMode, online = 0, cash = 0, finalPayment } = order;
+
+    switch (paymentMode) {
+      case 'Online + Cash':
+        return online + cash;
+      case 'online':
+        return finalPayment;
+      case 'cash':
+        return finalPayment;
+      default:
+        return finalPayment;
+    }
+  };
+
+  const finalAmount = getFinalAmount(localOrderDetails);
+
   return (
     <div className="max-w-3xl mx-auto bg-white p-8 rounded-lg shadow-lg mt-36">
       <h1 className="text-3xl font-semibold text-center mb-8 text-gray-800">Report Details</h1>
@@ -234,7 +261,22 @@ const PrintReport = () => {
           {localOrderDetails.discount > 0 && (
             <p><strong className="text-gray-700">Discount:</strong> {localOrderDetails.discount}</p>
           )}
+          {/* 
           <p><strong className="text-gray-700">Final Payment:</strong> {localOrderDetails.finalPayment}</p>
+          <p><strong className="text-gray-700">Payment Mode:</strong> {localOrderDetails.paymentMode}</p> 
+          */}
+
+
+
+          {/* Updated section with online + cash fields and also corrected final payment */}
+          {localOrderDetails.paymentMode === 'Online + Cash' && (
+            <div>
+              <p><strong className="text-gray-700">Online Paid:</strong> {localOrderDetails.online}</p>
+              <p><strong className="text-gray-700">Cash Paid:</strong> {localOrderDetails.cash}</p>
+            </div>
+          )}
+
+          <p><strong className="text-gray-700">Final Payment:</strong> {finalAmount}</p>
           <p><strong className="text-gray-700">Payment Mode:</strong> {localOrderDetails.paymentMode}</p>
         </div>
       </div>

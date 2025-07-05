@@ -73,7 +73,7 @@ const PatientForm = () => {
     referralFee:""
   });
 
-  // special state for online+cash amount spitting - Armaan Siddiqui
+  // special state for Online + Cash amount spitting - Armaan Siddiqui
   const [splitPayments, setSplitPayments] = useState({
     online: "",
     cash: "",
@@ -243,7 +243,7 @@ const PatientForm = () => {
     }
 
 
-    // handle online+cash payment mode input validation- Armaan Siddiqui
+    // handle Online + Cash payment mode input validation- Armaan Siddiqui
     if (formData.paymentMode === "Online + Cash") {
       const online = parseFloat(splitPayments.online) || 0;
       const cash = parseFloat(splitPayments.cash) || 0;
@@ -262,7 +262,7 @@ const PatientForm = () => {
       }
 
 
-      // handle online+cash payment mode data payload prepration- Armaan Siddiqui
+      // handle Online + Cash payment mode data payload prepration- Armaan Siddiqui
       if (formData.paymentMode === "Online + Cash") {
         orderData.online = parseFloat(splitPayments.online) || 0;
         orderData.cash = parseFloat(splitPayments.cash) || 0;
@@ -811,7 +811,7 @@ const PatientForm = () => {
                 <option value="">Select Payment Mode</option>
                 <option value="Online">Online</option>
                 <option value="Cash">Cash</option>
-                <option value="Online + Cash">Online + Cash</option> {/* Added option for online+cash Armaan Siddiqui */}
+                <option value="Online + Cash">Online + Cash</option> {/* Added option for Online + Cash Armaan Siddiqui */}
                 <option value="Unbilled">Unbilled</option>
               </select>
             </div>

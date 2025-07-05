@@ -53,6 +53,14 @@ const ModalEditForms = ({ isOpen, onClose, onSubmit, initialData }) => {
         finalPayment: initialData.finalPayment || "",
         paymentMode: initialData.paymentMode || "",
         referralFee: initialData.referralFee || "",
+        
+        // Added fields for online + cash - Armaan Siddiqui
+        online: initialData.online || "",
+        cash: initialData.cash || "",
+
+
+
+
       });
     }
   }, [initialData]);
@@ -77,16 +85,20 @@ const ModalEditForms = ({ isOpen, onClose, onSubmit, initialData }) => {
         ...prevState,
         [name]: value,
       };
-  
-      // If fees or discount change, recalculate finalPayment
-      if (name === "fees" || name === "discount") {
-        let fees = name === "fees" ? parseFloat(value) || 0 : parseFloat(updatedFormData.fees) || 0;
-        let discount = name === "discount" ? parseInt(value) || 0 : parseInt(updatedFormData.discount) || 0;
+
+
+      // Removed hard coded final payment calculation (not need)- Armaan Siddiui
+
+
+      // // If fees or discount change, recalculate finalPayment
+      // if (name === "fees" || name === "discount") {
+      //   let fees = name === "fees" ? parseFloat(value) || 0 : parseFloat(updatedFormData.fees) || 0;
+      //   let discount = name === "discount" ? parseInt(value) || 0 : parseInt(updatedFormData.discount) || 0;
 
   
-        // Update finalPayment after validation
-        updatedFormData.finalPayment = fees - discount;
-      }
+      //   // Update finalPayment after validation
+      //   updatedFormData.finalPayment = fees - discount;
+      // }
 
       
   
@@ -129,7 +141,7 @@ const ModalEditForms = ({ isOpen, onClose, onSubmit, initialData }) => {
           setFormData((prevState) => ({
             ...prevState,
             fees: subcategory.price || '',
-            finalPayment: subcategory.price || '',
+            // finalPayment: subcategory.price || '', removed wrong part - Armaan Siddiqui
             
           }));
         }
@@ -334,43 +346,71 @@ const ModalEditForms = ({ isOpen, onClose, onSubmit, initialData }) => {
             </div>
   
             {/* Final Payment */}
-           {/* Final Payment */}
-<div>
-  <label htmlFor="finalPayment" className="block text-sm font-medium text-gray-700">
-    Final Payment
-  </label>
-  <input
-    type="text"
-    id="finalPayment"
-    name="finalPayment"
-    value={formData.finalPayment}
-    onChange={handleChange} // You might want to prevent manual edits here
-    className="mt-2 block w-full rounded-md border-2 border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-4 py-2 text-sm"
-    readOnly
-    
-  />
-</div>
+            <div>
+              <label htmlFor="finalPayment" className="block text-sm font-medium text-gray-700">
+                Final Payment
+              </label>
+              <input
+                type="text"
+                id="finalPayment"
+                name="finalPayment"
+                value={formData.finalPayment}
+                onChange={handleChange} // You might want to prevent manual edits here
+                className="mt-2 block w-full rounded-md border-2 border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-4 py-2 text-sm"
+                readOnly
+                
+              />
+            </div>
 
   
             {/* Payment Mode */}
             <div>
-  <label htmlFor="paymentMode" className="block text-sm font-medium text-gray-700">
-    Payment Mode
-  </label>
-  <select
-    id="paymentMode"
-    name="paymentMode"
-    value={formData.paymentMode}
-    onChange={handleChange}
-    className="mt-2 block w-full rounded-md border-2 border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-4 py-2 text-sm"
-  >
-    <option value="">Select Payment Mode</option>
-    <option value="Cash">Cash</option>
-    <option value="Online">Online</option>
-  </select>
-</div>
+              <label htmlFor="paymentMode" className="block text-sm font-medium text-gray-700">
+                Payment Mode
+              </label>
+              <select
+                id="paymentMode"
+                name="paymentMode"
+                value={formData.paymentMode || ""}
+                onChange={handleChange}
+                className="mt-2 block w-full rounded-md border-2 border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-4 py-2 text-sm"
+              >
+                <option value="">Select Payment Mode</option>
+                <option value="Cash">Cash</option>
+                <option value="Online">Online</option>
+                {/* Added Option for new feature- Armaan Siddiqui */}
+                <option value="Online + Cash">Online + Cash</option> 
 
-  
+              </select>
+            </div>
+            {/* Form Fields for online + Cash- Armaan siddiqui */}
+            {formData.paymentMode === "Online + Cash" && (
+              <>
+                <div>
+                  <label htmlFor="online">Online Paid</label>
+                  <input
+                    type="number"
+                    id="online"
+                    name="online"
+                    value={formData.online || ""}
+                    onChange={handleChange}
+                    className="..."
+                  />
+                </div>
+                <div>
+                  <label htmlFor="cash">Cash Paid</label>
+                  <input
+                    type="number"
+                    id="cash"
+                    name="cash"
+                    value={formData.cash || ""}
+                    onChange={handleChange}
+                    className="..."
+                  />
+                </div>
+              </>
+            )}
+
             {/* Referral Fee */}
           
   
