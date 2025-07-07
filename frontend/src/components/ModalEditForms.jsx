@@ -4,7 +4,10 @@ import { fetchDoctors } from "../store/doctor";
 import { fetchCategories } from '../store/categories';
 import {  fetchSubcategoryDetail } from '../store/subcategories';
 
-import axios from 'axios';
+import { placeOrder,resetOrderState } from '../store/order';
+import axios from 'axios'; 
+
+import { toast } from "react-toastify"; 
 
 const ModalEditForms = ({ isOpen, onClose, onSubmit, initialData }) => {
   const dispatch = useDispatch();
@@ -32,7 +35,11 @@ const ModalEditForms = ({ isOpen, onClose, onSubmit, initialData }) => {
     discount: "",
     finalPayment: "",
     paymentMode: "",
-    referralFee:""
+    referralFee:"",
+
+    // added required fields for order creating- Armaan Siddiqui
+    serialNo: "",
+    placedBy: "",
    
   });
 
@@ -59,6 +66,10 @@ const ModalEditForms = ({ isOpen, onClose, onSubmit, initialData }) => {
         cash: initialData.cash || "",
 
 
+        // Added required fields for creating new order-Armaan Siddiqui
+        serialNo: initialData.serialNo || `ORD-${Date.now()}`,
+        placedBy: initialData.placedBy || "",
+
 
 
       });
@@ -78,32 +89,36 @@ const ModalEditForms = ({ isOpen, onClose, onSubmit, initialData }) => {
   // Handle input change
   const handleChange = (e) => {
     const { name, value } = e.target;
+
+
+    //Calculate values on change- Armaan Siddiqui
+    setFormData((prev) => recalculateFormData(prev, name, value));
+
+    // // Update formData with the changed value
+    // setFormData((prevState) => {
+    //   const updatedFormData = {
+    //     ...prevState,
+    //     [name]: value,
+    //   };
+
+
+    //   // Removed hard coded final payment calculation (not need)- Armaan Siddiui
+
+
+    //   // // If fees or discount change, recalculate finalPayment
+    //   // if (name === "fees" || name === "discount") {
+    //   //   let fees = name === "fees" ? parseFloat(value) || 0 : parseFloat(updatedFormData.fees) || 0;
+    //   //   let discount = name === "discount" ? parseInt(value) || 0 : parseInt(updatedFormData.discount) || 0;
+
   
-    // Update formData with the changed value
-    setFormData((prevState) => {
-      const updatedFormData = {
-        ...prevState,
-        [name]: value,
-      };
-
-
-      // Removed hard coded final payment calculation (not need)- Armaan Siddiui
-
-
-      // // If fees or discount change, recalculate finalPayment
-      // if (name === "fees" || name === "discount") {
-      //   let fees = name === "fees" ? parseFloat(value) || 0 : parseFloat(updatedFormData.fees) || 0;
-      //   let discount = name === "discount" ? parseInt(value) || 0 : parseInt(updatedFormData.discount) || 0;
-
-  
-      //   // Update finalPayment after validation
-      //   updatedFormData.finalPayment = fees - discount;
-      // }
+    //   //   // Update finalPayment after validation
+    //   //   updatedFormData.finalPayment = fees - discount;
+    //   // }
 
       
   
-      return updatedFormData;
-    });
+    //   return updatedFormData;
+    // });
   };
   
   
@@ -147,11 +162,102 @@ const ModalEditForms = ({ isOpen, onClose, onSubmit, initialData }) => {
         }
       }, [subcategory]);
 
+
+      // Added function for checking and reinitializing fields in form on value change - Armaan Siddiqui
+      const recalculateFormData = (prev, name, value) => {
+        const numVal = parseFloat(value) || 0;
+        const updated = { ...prev, [name]: value };
+        if (name === "fees" || name === "discount") {
+          const fees = name === "fees" ? numVal : parseFloat(prev.fees) || 0;
+          const discount = name === "discount" ? numVal : parseFloat(prev.discount) || 0;
+
+          if (discount > fees) {
+            alert("Discount cannot be greater than Fees.");
+            return prev;
+          }
+          else {
+            updated.finalPayment = (fees - discount).toFixed(2);
+          }
+          if (name === "discount" && prev.paymentMode === "Online + Cash") {
+            updated.online = "";
+            updated.cash = "";
+          }
+        }
+        const final = parseFloat(updated.finalPayment) || 0;
+        if (prev.paymentMode === "Online + Cash") {
+          if (name === "online") {
+            if (numVal > final) {
+              alert("Amount cannot be greater than Final Payment.");
+              return prev;
+            }
+            updated.online = numVal;
+            updated.cash = (final - numVal).toFixed(2);
+          }
+
+          if (name === "cash") {
+            if (numVal > final) {
+              alert("Amount cannot be greater than Final Payment.");
+              return prev;
+            }
+            updated.cash = numVal;
+            updated.online = (final - numVal).toFixed(2);
+          }
+        }
+
+        return updated;
+      };
+
+
+
+
   // Handle form submission
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    onSubmit(formData); // Pass formData to parent or Redux action
-  };
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  // Second check for data on submit - Armaan Siddiqui
+  const online = parseFloat(formData.online) || 0;
+  const cash = parseFloat(formData.cash) || 0;
+  const final = parseFloat(formData.finalPayment) || 0;
+
+  // added unbilled change handling- Armaan Siddiqui
+  if (formData.paymentMode === "Online + Cash") {
+    if (online + cash !== final) {
+      toast.error("Online + Cash should equal Final Payment");
+      return;
+    }
+  }
+
+  try {
+    if (initialData?._id) {
+      await axios.delete(`http://localhost:5000/api/unbilled/${initialData._id}`);
+    }
+    const orderData = {
+      ...formData,
+      online,
+      cash,
+      finalPayment: final,
+
+
+      // Modifying order data for complying with schema of order- Armaan Siddiqui
+      serialNo: formData.serialNo || `ORD-${Date.now()}`,
+      placedBy: formData.placedBy || "Unknown",
+    };
+    const orderResponse = await dispatch(placeOrder(orderData));
+    if (placeOrder.fulfilled.match(orderResponse)) {
+      toast.success("Order saved");
+      onClose?.();
+    }
+    else {
+      toast.error("Failed to save order");
+      console.error("Dispatch error:", orderResponse);
+    }
+
+  } catch (err) {
+    console.error("Could not save order:", err);
+    toast.error("Could not save order");
+  }
+};
+
 
   return (
     isOpen && (
@@ -409,6 +515,22 @@ const ModalEditForms = ({ isOpen, onClose, onSubmit, initialData }) => {
                 </div>
               </div>
             )}
+            <div>
+
+
+            {/* Added an extra field for showing the operator/admin who placed the unbill transaction-Armaan Siddiqui */}
+            <label htmlFor="placedBy" className="block text-sm font-medium text-gray-700">
+              Placed By
+            </label>
+            <input
+              type="text"
+              id="placedBy"
+              name="placedBy"
+              value={formData.placedBy || ""}
+              readOnly
+              className="mt-2 block w-full rounded-md border-2 border-gray-300 bg-gray-100 shadow-sm px-4 py-2 text-sm cursor-not-allowed"
+            />
+          </div>
 
             {/* Referral Fee */}
           

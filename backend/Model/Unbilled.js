@@ -60,6 +60,11 @@ const UnbilledSchema = new mongoose.Schema(
             type: Number,
             required: true
         },
+        // additional field to match the order schema- Armaan Siddiqui
+        placedBy: {
+            type: String,
+            required: true
+        }
     },
     { timestamps: true }
 );

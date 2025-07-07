@@ -73,13 +73,18 @@ const ModalEditForm = ({ isOpen, onClose, onSubmit, initialData }) => {
   // Handle input change
   const handleChange = (e) => {
     const { name, value } = e.target;
-  
+
+    //Calculate values on change- Armaan Siddiqui
+    setFormData((prev) => recalculateFormData(prev, name, value));
+
+
+    
     // Update formData with the changed value
-    setFormData((prevState) => {
-      const updatedFormData = {
-        ...prevState,
-        [name]: value,
-      };
+    // setFormData((prevState) => {
+    //   const updatedFormData = {
+    //     ...prevState,
+    //     [name]: value,
+    //   };
 
       // Removed hard coded final payment calculation- Armaan Siddiqui
       
@@ -94,8 +99,8 @@ const ModalEditForm = ({ isOpen, onClose, onSubmit, initialData }) => {
       // }
 
       
-        return updatedFormData;
-      });
+      //   return updatedFormData;
+      // });
     };
     
   
@@ -139,9 +144,69 @@ const ModalEditForm = ({ isOpen, onClose, onSubmit, initialData }) => {
         }
       }, [subcategory]);
 
+
+      // Added function for checking and reinitializing fields in form on value changes - Armaan Siddiqui
+      const recalculateFormData = (prev, name, value) => {
+        const numVal = parseFloat(value) || 0;
+        const updated = { ...prev, [name]: value };
+        if (name === "fees" || name === "discount") {
+          const fees = name === "fees" ? numVal : parseFloat(prev.fees) || 0;
+          const discount = name === "discount" ? numVal : parseFloat(prev.discount) || 0;
+          if (discount > fees) {
+            alert("Discount cannot be greater than Fees.");
+            return prev;
+          }
+          else {
+            updated.finalPayment = (fees - discount).toFixed(2);
+          }
+
+          if (name === "discount" && prev.paymentMode === "Online + Cash") {
+            updated.online = "";
+            updated.cash = "";
+          }
+        }
+
+        const final = parseFloat(updated.finalPayment) || 0;
+
+        if (prev.paymentMode === "Online + Cash") {
+          if (name === "online") {
+            if (numVal > final) {
+              alert("Online amount cannot be greater than Final Payment.");
+              return prev;
+            }
+            updated.online = numVal;
+            updated.cash = (final - numVal).toFixed(2);
+          }
+
+          if (name === "cash") {
+            if (numVal > final) {
+              alert("Cash amount cannot be greater than Final Payment.");
+              return prev;
+            }
+            updated.cash = numVal;
+            updated.online = (final - numVal).toFixed(2);
+          }
+        }
+
+        return updated;
+      };
+
   // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
+    
+    // second check for data on submit - Armaan Siddiqui
+    const online = parseFloat(formData.online) || 0;
+    const cash = parseFloat(formData.cash) || 0;
+    const final = parseFloat(formData.finalPayment) || 0;
+
+    if (
+      formData.paymentMode === "Online + Cash" &&
+      online + cash !== final
+    ) {
+      alert("Online + Cash must exactly equal Final Payment.");
+      return;
+    }
     onSubmit(formData); // Pass formData to parent or Redux action
   };
 
