@@ -16,6 +16,9 @@ const ModalEditForm = ({ isOpen, onClose, onSubmit, initialData }) => {
   const { categories} = useSelector((state) => state.categories);
   const { subcategory, loading} = useSelector((state) => state.subcategory);
   
+  // state for managing wrong disc input- Armaan Siddiqui
+  const [prevDiscount, setPrevDiscount] = useState("");
+  
 
 
   // Local state for form fields
@@ -56,6 +59,7 @@ const ModalEditForm = ({ isOpen, onClose, onSubmit, initialData }) => {
         // add new fields- Armaan Siddiqui
         online: initialData.online || "",
         cash: initialData.cash || "",
+        referralFee: initialData.referralFee || "", 
 
       });
     }
@@ -71,38 +75,74 @@ const ModalEditForm = ({ isOpen, onClose, onSubmit, initialData }) => {
   }, [isOpen, dispatch]);
 
   // Handle input change
-  const handleChange = (e) => {
+  const handleChange = (e) => {    
+    //Calculate values on change- Armaan Siddiqui
     const { name, value } = e.target;
 
-    //Calculate values on change- Armaan Siddiqui
-    setFormData((prev) => recalculateFormData(prev, name, value));
+    if (name === "subcategory") {
+      const selectedSub = filteredSubcategories.find((sub) => sub.name === value);
+      if (selectedSub?._id) {
+        setValueS(selectedSub._id); // correct ID
+        dispatch(fetchSubcategoryDetail(selectedSub._id));
+      }
 
+      setFormData((prev) => ({
+        ...prev,
+        subcategory: value,
+        fees: "",
+        referralFee: "",
+        discount: "",
+        finalPayment: "",
+        online: "",
+        cash: "",
+      }));
+      return;
+    }
 
-    
+    // Track previous discount- Armaan Siddiqui
+    if (name === "discount") {
+      setPrevDiscount(formData.discount);  // Save old value before update- Armaan Siddiqui
+    }
+
+    if (name === "paymentMode") {
+      setFormData((prev) => ({
+        ...prev,
+        paymentMode: value,
+        online: value === "Online + Cash" ? prev.online : "",
+        cash: value === "Online + Cash" ? prev.cash : "",
+      }));
+      return;
+    }
+
+    setFormData((prev) => {
+      const updated = { ...prev, [name]: value };
+      return recalculateFormData(updated, name, value);
+    });
+
+      
     // Update formData with the changed value
     // setFormData((prevState) => {
     //   const updatedFormData = {
     //     ...prevState,
     //     [name]: value,
     //   };
-
-      // Removed hard coded final payment calculation- Armaan Siddiqui
-      
-      // // If fees or discount change, recalculate finalPayment
-      // if (name === "fees" || name === "discount") {
-      //   let fees = name === "fees" ? parseFloat(value) || 0 : parseFloat(updatedFormData.fees) || 0;
-      //   let discount = name === "discount" ? parseInt(value) || 0 : parseInt(updatedFormData.discount) || 0;
-
   
-      //   // Update finalPayment after validation
-      //   updatedFormData.finalPayment = fees - discount;
-      // }
-
-      
-      //   return updatedFormData;
-      // });
-    };
+    // Removed hard coded final payment calculation- Armaan Siddiqui
+       
+    // // If fees or discount change, recalculate finalPayment
+    // if (name === "fees" || name === "discount") {
+    //   let fees = name === "fees" ? parseFloat(value) || 0 : parseFloat(updatedFormData.fees) || 0;
+    //   let discount = name === "discount" ? parseInt(value) || 0 : parseInt(updatedFormData.discount) || 0;
+  
     
+    //   // Update finalPayment after validation
+    //   updatedFormData.finalPayment = fees - discount;
+    // }
+  
+       
+    //   return updatedFormData;
+    // });
+  };
   
 
   useEffect(() => {
@@ -125,42 +165,46 @@ const ModalEditForm = ({ isOpen, onClose, onSubmit, initialData }) => {
     fetchSubcategoriesByCategory();
   }, [formData.category]);
 
+  // Added refferal fee fetching for discount validation - Armaan Siddiqui
   useEffect(() => {
-     
-    
-      if (valueS) {
-        dispatch(fetchSubcategoryDetail(valueS));
-      }
-    }, [valueS]);
-
-     useEffect(() => {
-        if (subcategory) {
-          setFormData((prevState) => ({
-            ...prevState,
-            fees: subcategory.price || '',
-            // finalPayment: subcategory.price || '',   removed wrong part - Armaan Siddiqui
-            
-          }));
-        }
-      }, [subcategory]);
-
+    if (subcategory && subcategory._id === valueS) {
+      setFormData((prev) => {
+        const updated = {
+          ...prev,
+          fees: subcategory.price || "",
+          referralFee: subcategory.referralFee || "",
+          discount: "",
+          finalPayment: subcategory.price || "",
+          online: "",
+          cash: "",
+        };
+        return recalculateFormData(updated, null, null);
+      });
+    }
+  }, [subcategory, valueS]);
 
       // Added function for checking and reinitializing fields in form on value changes - Armaan Siddiqui
       const recalculateFormData = (prev, name, value) => {
         const numVal = parseFloat(value) || 0;
         const updated = { ...prev, [name]: value };
+
         if (name === "fees" || name === "discount") {
           const fees = name === "fees" ? numVal : parseFloat(prev.fees) || 0;
           const discount = name === "discount" ? numVal : parseFloat(prev.discount) || 0;
-          if (discount > fees) {
-            alert("Discount cannot be greater than Fees.");
-            return prev;
-          }
-          else {
-            updated.finalPayment = (fees - discount).toFixed(2);
+          const referralFee = parseFloat(prev.referralFee) || 0;
+
+          if (discount > referralFee) {
+            alert("Discount cannot be greater than Referral Fee.");
+            updated.discount = prevDiscount; // Revert to previous discount
+            updated.finalPayment = (fees - parseFloat(prevDiscount || 0)).toFixed(2);
+            return updated;
           }
 
-          if (name === "discount" && prev.paymentMode === "Online + Cash") {
+          updated.fees = fees;
+          updated.discount = discount;
+          updated.finalPayment = (fees - discount).toFixed(2);
+
+          if (prev.paymentMode === "Online + Cash") {
             updated.online = "";
             updated.cash = "";
           }
@@ -171,7 +215,7 @@ const ModalEditForm = ({ isOpen, onClose, onSubmit, initialData }) => {
         if (prev.paymentMode === "Online + Cash") {
           if (name === "online") {
             if (numVal > final) {
-              alert("Online amount cannot be greater than Final Payment.");
+              alert("Amount cannot be greater than Final Payment.");
               return prev;
             }
             updated.online = numVal;
@@ -180,7 +224,7 @@ const ModalEditForm = ({ isOpen, onClose, onSubmit, initialData }) => {
 
           if (name === "cash") {
             if (numVal > final) {
-              alert("Cash amount cannot be greater than Final Payment.");
+              alert("Amount cannot be greater than Final Payment.");
               return prev;
             }
             updated.cash = numVal;
@@ -191,13 +235,14 @@ const ModalEditForm = ({ isOpen, onClose, onSubmit, initialData }) => {
         return updated;
       };
 
+
   // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
     
     // second check for data on submit - Armaan Siddiqui
-    const online = parseFloat(formData.online) || 0;
-    const cash = parseFloat(formData.cash) || 0;
+    const online =( formData.paymentMode === "Online + Cash" && parseFloat(formData.online) )|| 0;
+    const cash = ( formData.paymentMode === "Online + Cash" && parseFloat(formData.cash) )|| 0;
     const final = parseFloat(formData.finalPayment) || 0;
 
     if (
@@ -207,7 +252,7 @@ const ModalEditForm = ({ isOpen, onClose, onSubmit, initialData }) => {
       alert("Online + Cash must exactly equal Final Payment.");
       return;
     }
-    onSubmit(formData); // Pass formData to parent or Redux action
+    onSubmit(formData);
   };
 
   return (
@@ -316,8 +361,11 @@ const ModalEditForm = ({ isOpen, onClose, onSubmit, initialData }) => {
     <option value="">Select Doctor</option>
     <option value="0">None</option>
     {doctors?.map((doctor) => (
-      <option key={doctor.id} value={doctor._id}>
-        {doctor.name} {/* Display doctor's name */}
+      // <option key={doctor.id} value={doctor._id}>
+      //   {doctor.name} {/* Display doctor's name */}
+      // </option>
+      <option key={doctor._id} value={doctor._id}>
+        {doctor.name}
       </option>
     ))}
   </select>
@@ -341,9 +389,12 @@ const ModalEditForm = ({ isOpen, onClose, onSubmit, initialData }) => {
                 <option value="">Select Category</option>
                 {/* Add categories here */}
                 {categories?.map((category) => (
-      <option key={category.id} value={category.name}>
-        {category.name} {/* Display doctor's name */}
-      </option>
+      // <option key={category.id} value={category.name}>
+      //   {category.name} {/* Display doctor's name */}
+      // </option>
+        <option key={category._id} value={category.name}>
+          {category.name}
+        </option>
     ))}
               </select>
             </div>
@@ -384,6 +435,7 @@ const ModalEditForm = ({ isOpen, onClose, onSubmit, initialData }) => {
                 value={formData.fees}
                 onChange={handleChange}
                 className="mt-2 block w-full rounded-md border-2 border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-4 py-2 text-sm"
+                readOnly
               />
             </div>
   

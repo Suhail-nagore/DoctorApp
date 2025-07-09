@@ -91,13 +91,14 @@ const PrintReport = () => {
         { label: 'Phone No', value: localOrderDetails.phoneNo },
         { label: 'Category', value: localOrderDetails.category },
         { label: 'SubCategory', value: localOrderDetails.subcategory, isHighlighted: true },
-        { label: 'Referred By', value: "Dr. " + doctorDetails.name },
+        { label: 'Referred By', value: doctorDetails ? "Dr. " + doctorDetails.name : "N/A" },
+
         { label: 'Fees', value: localOrderDetails.fees },
         localOrderDetails.discount > 0 && { label: 'Discount', value: localOrderDetails.discount },
 
         //Added new fields to align with new logic and feature online + cash- Armaan Siddiqui
-        localOrderDetails.paymentMode === 'Online + Cash' && { label: 'Online Paid', value: localOrderDetails.online },
-        localOrderDetails.paymentMode === 'Online + Cash' && { label: 'Cash Paid', value: localOrderDetails.cash },
+        // localOrderDetails.paymentMode === 'Online + Cash' && { label: 'Online Paid', value: localOrderDetails.online },
+        // localOrderDetails.paymentMode === 'Online + Cash' && { label: 'Cash Paid', value: localOrderDetails.cash },
         { label: 'Final Payment', value: finalAmount },
         { label: 'Payment Mode', value: localOrderDetails.paymentMode },
 
@@ -134,8 +135,8 @@ const PrintReport = () => {
           const isHighlighted = field.isHighlighted || false;
           const fieldFont = isHighlighted ? boldFont : regularFont;
           const fieldColor = isHighlighted ? boldColor : color;
-  
-          const fieldText = `${field.label}: ${field.value}`;
+          const sanitizedValue = String(field.value).replace(/\n/g, ' ');
+          const fieldText = `${field.label}: ${sanitizedValue}`;
           const fieldLines = wrapText(fieldText, colSpacing - 10, fieldFont, fontSizeText);
   
           fieldLines.forEach((line, index) => {
@@ -210,23 +211,8 @@ const PrintReport = () => {
 
 
 
-  // Adding a function to calsulate final amount- Armaan Siddiqui
-  const getFinalAmount = (order) => {
-    const { paymentMode, online = 0, cash = 0, finalPayment } = order;
+  const finalAmount = localOrderDetails.fees - (localOrderDetails.discount || 0);
 
-    switch (paymentMode) {
-      case 'Online + Cash':
-        return online + cash;
-      case 'online':
-        return finalPayment;
-      case 'cash':
-        return finalPayment;
-      default:
-        return finalPayment;
-    }
-  };
-
-  const finalAmount = getFinalAmount(localOrderDetails);
 
   return (
     <div className="max-w-3xl mx-auto bg-white p-8 rounded-lg shadow-lg mt-36">

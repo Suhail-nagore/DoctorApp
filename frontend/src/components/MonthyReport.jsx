@@ -213,6 +213,10 @@ const [message, setMessage] = useState("");   // Store message
         "Serial No": serialNo++,
         "Doctor Name": doctor.name || "Unknown",
         "Total Commission": totalCommission,
+
+        // Added fields for excel sheet- Armaan Siddiqui
+        "Doctor Mobile": doctor.phoneNo || "N/A",
+        "Doctor Address": doctor.address || "N/A",
       });
     });
 

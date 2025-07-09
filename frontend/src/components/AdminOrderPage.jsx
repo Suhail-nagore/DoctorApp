@@ -11,8 +11,23 @@ import axios from "axios";
 import { DateRangePicker } from "react-date-range";
 import { enGB } from "date-fns/locale";
 
+
+// imports for print report button navigation - Armaan Siddiqui
+import { useNavigate } from "react-router-dom";
+import PrintReportModal from "./PrintReportModal";
+
+
 const AdminOrdersPage = () => {
+  
+
+  // added hooks for print modal- Armaan Siddiqui
+  const [showPrintModal, setShowPrintModal] = useState(false);
+  const [printOrder, setPrintOrder] = useState(null);
+  const [printDoctor, setPrintDoctor] = useState(null);
+
+
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [orders, setOrders] = useState([]);
   const [showDateRange, setShowDateRange] = useState(false); // New s
   const [showScrollButton, setShowScrollButton] = useState(false);
@@ -369,6 +384,18 @@ const AdminOrdersPage = () => {
                             >
                               Edit
                             </Button>
+
+                            {/* Print report button - Armaan Siddiui */}
+                            <Button
+                              className="w-full sm:w-auto bg-green-600 text-white"
+                              onClick={() => {
+                                setPrintOrder(order);
+                                setPrintDoctor(doctors.find((doc) => doc._id === order.referredBy));
+                                setShowPrintModal(true);
+                              }}
+                            >
+                              Print
+                            </Button>
                             <Button
                               className="w-full sm:w-auto bg-red-600 text-white"
                               onClick={() => handleDeleteOrder(order._id)}
@@ -419,6 +446,21 @@ const AdminOrdersPage = () => {
       >
         ↑
       </button>
+      
+      {/* Added print modal - Armaan Siddiqui*/}
+      {showPrintModal && printOrder && (
+        <PrintReportModal
+          isOpen={showPrintModal}
+          onClose={() => {
+            setShowPrintModal(false);
+            setPrintOrder(null);
+            setPrintDoctor(null);
+          }}
+          orderDetails={printOrder}
+          doctorDetails={printDoctor}
+        />
+      )}
+
     </div>
   );
 };
