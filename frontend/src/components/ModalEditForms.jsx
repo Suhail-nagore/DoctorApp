@@ -137,9 +137,11 @@ const ModalEditForms = ({ isOpen, onClose, onSubmit, initialData }) => {
     }
 
     setFormData((prev) => {
-      const updated = { ...prev, [name]: value };
-      return recalculateFormData(updated, name, value);
-    });
+    const updated = recalculateFormData(prev, name, value);
+    if (updated === prev) return prev;
+    return updated;
+  });
+
       
     // Update formData with the changed value
     // setFormData((prevState) => {

@@ -115,9 +115,12 @@ const ModalEditForm = ({ isOpen, onClose, onSubmit, initialData }) => {
     }
 
     setFormData((prev) => {
-      const updated = { ...prev, [name]: value };
-      return recalculateFormData(updated, name, value);
+    const updated = recalculateFormData(prev, name, value);
+    if (updated === prev) return prev;
+
+    return updated;
     });
+
 
       
     // Update formData with the changed value
@@ -184,56 +187,67 @@ const ModalEditForm = ({ isOpen, onClose, onSubmit, initialData }) => {
   }, [subcategory, valueS]);
 
       // Added function for checking and reinitializing fields in form on value changes - Armaan Siddiqui
-      const recalculateFormData = (prev, name, value) => {
-        const numVal = parseFloat(value) || 0;
-        const updated = { ...prev, [name]: value };
+const recalculateFormData = (prev, name, value) => {
+  const numVal = parseFloat(value) || 0;
+  const updated = { ...prev, [name]: value };
 
-        if (name === "fees" || name === "discount") {
-          const fees = name === "fees" ? numVal : parseFloat(prev.fees) || 0;
-          const discount = name === "discount" ? numVal : parseFloat(prev.discount) || 0;
-          const referralFee = parseFloat(prev.referralFee) || 0;
+  const fees = parseFloat(prev.fees) || 0;
+  const discount = parseFloat(prev.discount) || 0;
+  const referralFee = parseFloat(prev.referralFee) || 0;
+  const final = parseFloat(prev.finalPayment) || 0;
 
-          if (discount > referralFee) {
-            alert("Discount cannot be greater than Referral Fee.");
-            updated.discount = prevDiscount; // Revert to previous discount
-            updated.finalPayment = (fees - parseFloat(prevDiscount || 0)).toFixed(2);
-            return updated;
-          }
+  // When updating fees or discount
+  if (name === "fees" || name === "discount") {
+    const newFees = name === "fees" ? numVal : fees;
+    const newDiscount = name === "discount" ? numVal : discount;
 
-          updated.fees = fees;
-          updated.discount = discount;
-          updated.finalPayment = (fees - discount).toFixed(2);
+    if (newDiscount > referralFee) {
+      alert("Discount cannot be greater than Referral Fee.");
+      return prev;
+    }
 
-          if (prev.paymentMode === "Online + Cash") {
-            updated.online = "";
-            updated.cash = "";
-          }
-        }
+    updated.fees = newFees;
+    updated.discount = newDiscount;
+    updated.finalPayment = (newFees - newDiscount).toFixed(2);
 
-        const final = parseFloat(updated.finalPayment) || 0;
+    if (prev.paymentMode === "Online + Cash") {
+      updated.online = "";
+      updated.cash = "";
+    }
 
-        if (prev.paymentMode === "Online + Cash") {
-          if (name === "online") {
-            if (numVal > final) {
-              alert("Amount cannot be greater than Final Payment.");
-              return prev;
-            }
-            updated.online = numVal;
-            updated.cash = (final - numVal).toFixed(2);
-          }
+    return updated;
+  }
 
-          if (name === "cash") {
-            if (numVal > final) {
-              alert("Amount cannot be greater than Final Payment.");
-              return prev;
-            }
-            updated.cash = numVal;
-            updated.online = (final - numVal).toFixed(2);
-          }
-        }
+  // If payment mode is "Online + Cash", validate and sync values
+  if (prev.paymentMode === "Online + Cash") {
+    if (name === "online" || name === "cash") {
+      if (numVal > final) {
+        alert("Amount cannot be greater than Final Payment.");
+        return prev; // Don't update if invalid
+      }
 
-        return updated;
-      };
+      if (name === "online") {
+        updated.online = numVal;
+        updated.cash = (final - numVal).toFixed(2);
+      }
+
+      if (name === "cash") {
+        updated.cash = numVal;
+        updated.online = (final - numVal).toFixed(2);
+      }
+
+      // Optional: enforce that online + cash == final
+      const total = parseFloat(updated.online || 0) + parseFloat(updated.cash || 0);
+      if (total > final) {
+        alert("Total Online + Cash cannot exceed Final Payment.");
+        return prev;
+      }
+    }
+  }
+
+  return updated;
+};
+
 
 
   // Handle form submission
@@ -505,6 +519,7 @@ const ModalEditForm = ({ isOpen, onClose, onSubmit, initialData }) => {
                     name="online"
                     value={formData.online || ""}
                     onChange={handleChange}
+                    max={formData.finalPayment}
                     className="mt-2 block w-full rounded-md border-2 border-gray-300 shadow-sm px-4 py-2 text-sm"
                   />
                 </div>
