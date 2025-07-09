@@ -1,11 +1,11 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
+import api from '@/common/axios';
 
 // Create async thunk to fetch subcategory detail by ID
 export const fetchSubcategoryDetail = createAsyncThunk(
   'subcategory/fetchSubcategoryDetail',
   async (subcategoryId) => {
-    const response = await axios.get(`http://localhost:5000/api/subcategory/${subcategoryId}`);
+    const response = await api.get(`/subcategory/${subcategoryId}`);
     return response.data.category; // Return the subcategory data
   }
 );

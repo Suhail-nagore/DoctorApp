@@ -9,6 +9,7 @@ import { DateRangePicker } from "react-date-range";
 import "react-date-range/dist/styles.css"; // Main CSS file
 import "react-date-range/dist/theme/default.css"; // Theme CSS file
 import { format } from "date-fns";
+import api from "@/common/axios";
 
 const DoctorReport = () => {
   const [doctors, setDoctors] = useState([]);
@@ -25,18 +26,17 @@ const DoctorReport = () => {
   const [showTable, setShowTable] = useState(false);
   const [searchQuery, setSearchQuery] = useState(""); // State for the search input
 
-  useEffect(() => {
-    const fetchDoctors = async () => {
-      try {
-        const response = await fetch("http://localhost:5000/api/doctors");
-        const data = await response.json();
-        setDoctors(data.doctors || []);
-      } catch (error) {
-        console.error("Error fetching doctors:", error);
-      }
-    };
-    fetchDoctors();
-  }, []);
+ useEffect(() => {
+  const fetchDoctors = async () => {
+    try {
+      const response = await api.get("/doctors");
+      setDoctors(response.data.doctors || []);
+    } catch (error) {
+      console.error("Error fetching doctors:", error);
+    }
+  };
+  fetchDoctors();
+}, []);
 
   const calculateTotalCommission = () => {
     return patients.reduce((total, patient) => {
@@ -45,41 +45,45 @@ const DoctorReport = () => {
     }, 0);
   };
 
-  const handleSubmit = async () => {
-    if (!selectedDoctor) {
-      alert("Please select a doctor!");
-      return;
-    }
-  
-    const { startDate, endDate } = dateRange[0];
-  
-    try {
-      // Fetch patients report
-      const reportResponse = await fetch(
-        `http://localhost:5000/api/patientsReport?doctorId=${selectedDoctor}&startDate=${startDate.toISOString()}&endDate=${endDate.toISOString()}`
-      );
-      const reportData = await reportResponse.json();
-  
-      // Update patients state
-      setPatients(reportData.patients || []);
-  
-      // Fetch doctor data
-      const doctorResponse = await fetch(`http://localhost:5000/api/doctor/${selectedDoctor}`);
-      const doctorData = await doctorResponse.json();
-  
-      // Update doctor discount
-      setDoctorDiscount(doctorData.doctor.discount || 0);
-  
-      // Show table
-      setShowTable(true);
-      window.scrollTo({
-        top: window.scrollY + 200, // Adjust the 200 value to control how much the page scrolls
-        behavior: "smooth", // Smooth scroll effect
-      });
-    } catch (error) {
-      console.error("Error fetching patients or doctor data:", error);
-    }
-  };
+const handleSubmit = async () => {
+  if (!selectedDoctor) {
+    alert("Please select a doctor!");
+    return;
+  }
+
+  const { startDate, endDate } = dateRange[0];
+
+  try {
+    // Fetch patients report
+    const reportResponse = await api.get(`/patientsReport`, {
+      params: {
+        doctorId: selectedDoctor,
+        startDate: startDate.toISOString(),
+        endDate: endDate.toISOString(),
+      },
+    });
+    const reportData = reportResponse.data;
+
+    // Update patients state
+    setPatients(reportData.patients || []);
+
+    // Fetch doctor data
+    const doctorResponse = await api.get(`/doctor/${selectedDoctor}`);
+    const doctorData = doctorResponse.data;
+
+    // Update doctor discount
+    setDoctorDiscount(doctorData.doctor.discount || 0);
+
+    // Show table
+    setShowTable(true);
+    window.scrollTo({
+      top: window.scrollY + 200,
+      behavior: "smooth",
+    });
+  } catch (error) {
+    console.error("Error fetching patients or doctor data:", error);
+  }
+};
 
   // Filter doctors based on the search query
   const filteredDoctors = doctors.filter((doctor) =>

@@ -1,14 +1,14 @@
 // src/redux/categoriesSlice.js
 
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
+import api from '@/common/axios';
 
 // Async thunk to fetch categories from the server
 export const fetchCategories = createAsyncThunk(
   'categories/fetchCategories',
   async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/categories');
+      const response = await api.get('/categories');
       return response.data.categories; // Assuming the data you need is in response.data.categories
     } catch (error) {
       console.error('Error fetching categories:', error);

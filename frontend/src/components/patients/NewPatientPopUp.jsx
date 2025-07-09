@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import api from '@/common/axios';
 
 const NewPatientPopUp = ({ setIsAddPatient, phoneNo }) => {
   // Prevent background scrolling when the modal is open
@@ -27,7 +27,7 @@ const NewPatientPopUp = ({ setIsAddPatient, phoneNo }) => {
     };
 
     try {
-      const response = await axios.post('http://localhost:5000/api/patient/add', patientData);
+      const response = await api.post('/patient/add', patientData);
 
       if (response.status === 200) {
         // Handle success (you can display a success message here or close the modal)

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast, ToastContainer } from "react-toastify";
-import axios from 'axios';
 import { Search } from 'lucide-react';
 import "react-toastify/dist/ReactToastify.css";
 import { fetchPatients, checkPatientByPhone, setIsNewEntry } from "../../store/patient";
@@ -30,6 +29,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import AddDoctorModal from "./AddDoctor";
+import api from "@/common/axios";
 
 const PatientForm = () => {
     const dispatch = useDispatch();
@@ -133,8 +133,8 @@ const PatientForm = () => {
       }
   
       try {
-        const response = await axios.get(
-          `http://localhost:5000/api/subcategory?category=${formData.category}`
+        const response = await api.get(
+          `/subcategory?category=${formData.category}`
         );
         setFilteredSubcategories(response.data.subcategories); // Update with actual key from API response
       } catch (error) {

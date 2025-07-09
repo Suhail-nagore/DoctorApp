@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useDispatch } from "react-redux";
-import axios from 'axios';
 import { fetchDoctors } from '../../store/doctor';
 import { X } from 'lucide-react'; // Import the cross icon from Lucide
+import api from '@/common/axios';
 
 const AddDoctorModal = ({ isOpen, onClose }) => {
     const dispatch = useDispatch();
@@ -30,7 +30,7 @@ const AddDoctorModal = ({ isOpen, onClose }) => {
             phoneNo: formData.phoneNo || '0', // Set phone number to '0' if empty
         };
         try {
-            const response = await axios.post('http://localhost:5000/api/doctor/add', updatedFormData);
+            const response = await api.post('/doctor/add', updatedFormData);
             setFormData({
                 name: '',
                 phoneNo: '',

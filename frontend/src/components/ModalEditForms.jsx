@@ -5,12 +5,12 @@ import { fetchCategories } from '../store/categories';
 import {  fetchSubcategoryDetail } from '../store/subcategories';
 
 import { placeOrder,resetOrderState } from '../store/order';
-import axios from 'axios'; 
 
 import { toast } from "react-toastify"; 
 
 //added navigate for rerouting to print report- Armaan Siddiqui
 import { useNavigate } from 'react-router-dom'; 
+import api from "@/common/axios";
 
 
 
@@ -179,8 +179,8 @@ const ModalEditForms = ({ isOpen, onClose, onSubmit, initialData }) => {
       }
 
       try {
-        const response = await axios.get(
-          `http://localhost:5000/api/subcategory?category=${formData.category}`
+        const response = await api.get(
+          `/subcategory?category=${formData.category}`
         );
         setFilteredSubcategories(response.data.subcategories); // Update subcategories based on category
       } catch (error) {
@@ -289,7 +289,7 @@ const handleSubmit = async (e) => {
 
   try {
     if (initialData?._id) {
-      await axios.delete(`http://localhost:5000/api/unbilled/${initialData._id}`);
+      await api.get(`/unbilled/${initialData._id}`);
     }
     const orderData = {
       ...formData,

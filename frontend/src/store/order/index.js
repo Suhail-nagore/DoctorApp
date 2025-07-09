@@ -1,12 +1,12 @@
+import api from '@/common/axios';
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
 
 // Thunk to place an order
 export const placeOrder = createAsyncThunk(
   'order/placeOrder',
   async (formData, { rejectWithValue }) => {
     try {
-      const response = await axios.post('http://localhost:5000/api/placeOrder', formData);
+      const response = await api.post('/placeOrder', formData);
       return response.data.order; // Assuming the response contains the order data or success message
     } catch (error) {
       console.error('Error placing order:', error);
@@ -20,7 +20,7 @@ export const fetchAllOrders = createAsyncThunk(
   'order/fetchAllOrders',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get('http://localhost:5000/api/fetchAllOrder');
+      const response = await api.get('/fetchAllOrder');
       return response.data.orders; // Assuming the response contains the array of orders
     } catch (error) {
       console.error('Error fetching all orders:', error);
@@ -34,8 +34,8 @@ export const fetchOrdersByDate = createAsyncThunk(
   'order/fetchOrdersByDate',
   async ({ startDate, endDate }, { rejectWithValue }) => {
     try {
-      const response = await axios.get(
-        `http://localhost:5000/api/ordersbydate?startDate=${startDate}&endDate=${endDate}`
+      const response = await api.get(
+        `/ordersbydate?startDate=${startDate}&endDate=${endDate}`
       );
       return response.data.orders; // Assuming the response contains the array of filtered orders
     } catch (error) {
@@ -50,7 +50,7 @@ export const updateOrder = createAsyncThunk(
   'order/updateOrder',
   async ({ orderId, updatedData }, { rejectWithValue }) => {
     try {
-      const response = await axios.put(`http://localhost:5000/api/orders/${orderId}`, updatedData);
+      const response = await api.put(`/orders/${orderId}`, updatedData);
       return response.data.order; // Assuming the response contains the updated order data
     } catch (error) {
       console.error('Error updating order:', error);

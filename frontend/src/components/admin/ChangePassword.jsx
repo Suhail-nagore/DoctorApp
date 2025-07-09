@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { toast } from 'react-toastify';
-import axios from 'axios';
 import 'react-toastify/dist/ReactToastify.css';
+import { adminApi } from '@/common/axios';
 
 const ChangePassword = () => {
   const [passwords, setPasswords] = useState({
@@ -28,8 +28,8 @@ const ChangePassword = () => {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.put(
-        'http://localhost:5000/admin/api/change-password',
+      const response = await adminApi.put(
+        '/change-password',
         {
           currentPassword: passwords.currentPassword,
           newPassword: passwords.newPassword

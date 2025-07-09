@@ -1,11 +1,11 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
+import api from '@/common/axios';
 
 // Async thunk to check authentication
 export const checkAuth = createAsyncThunk(
   "auth/checkauth",
   async () => {
-    const response = await axios.get("http://localhost:5000/api/checkauth", {
+    const response = await api.get("/checkauth", {
       headers: {
         "Authorization": "Bearer " + localStorage.getItem("token"),
       },

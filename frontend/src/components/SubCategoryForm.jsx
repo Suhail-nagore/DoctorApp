@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '@/common/axios';
 
 const SubCategoryForm = () => {
   const [formData, setFormData] = useState({
@@ -22,7 +22,7 @@ const SubCategoryForm = () => {
 
   const fetchCategories = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/categories');
+      const response = await api.get('/categories');
       setCategories(response.data.categories || []);
     } catch (error) {
       console.error('Error fetching categories:', error);
@@ -31,7 +31,7 @@ const SubCategoryForm = () => {
 
   const fetchSubCategories = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/subcategories');
+      const response = await api.get('/subcategories');
       const subCategoriesData = response.data.Subcategories || [];
       setSubCategories(subCategoriesData);
       setFilteredSubCategories(subCategoriesData);
@@ -54,14 +54,14 @@ const SubCategoryForm = () => {
       let response;
       if (editingSubCategory) {
         // Update existing subcategory
-        response = await axios.put(
-          `http://localhost:5000/api/subcategory/${editingSubCategory._id}`,
+        response = await api.put(
+          `/subcategory/${editingSubCategory._id}`,
           formData
         );
         setMessage(response.data.message || 'Subcategory updated successfully!');
       } else {
         // Add new subcategory
-        response = await axios.post('http://localhost:5000/api/addSubCategory', formData);
+        response = await api.post('/addSubCategory', formData);
         setMessage(response.data.message || 'Subcategory added successfully!');
       }
 
@@ -85,7 +85,7 @@ const SubCategoryForm = () => {
       return;
     }
     try {
-      await axios.delete(`http://localhost:5000/api/subcategory/${id}`);
+      await api.get(`/subcategory/${id}`);
       setMessage('Subcategory deleted successfully!');
       fetchSubCategories();
     } catch (error) {

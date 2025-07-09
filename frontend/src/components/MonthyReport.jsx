@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { RefreshCcw } from 'lucide-react';
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import api from "@/common/axios";
 
 const MonthlyReport = () => {
   const dispatch = useDispatch();
@@ -61,22 +62,21 @@ const [message, setMessage] = useState("");   // Store message
   };
 
   // Fetch all orders and categories when the component mounts
-  useEffect(() => {
-    dispatch(fetchAllOrders());
-    dispatch(fetchCategories()).then((res) => setCategories(res.payload));
+useEffect(() => {
+  dispatch(fetchAllOrders());
+  dispatch(fetchCategories()).then((res) => setCategories(res.payload));
 
-    const fetchDoctors = async () => {
-      try {
-        const response = await fetch("http://localhost:5000/api/doctors");
-        const data = await response.json();
-        setDoctors(data.doctors || []);
-      } catch (error) {
-        console.error("Error fetching doctors:", error);
-      }
-    };
+  const fetchDoctors = async () => {
+    try {
+      const response = await api.get("/doctors");
+      setDoctors(response.data.doctors || []);
+    } catch (error) {
+      console.error("Error fetching doctors:", error);
+    }
+  };
 
-    fetchDoctors();
-  }, [dispatch]);
+  fetchDoctors();
+}, [dispatch]);
 
   // Initially set the filtered orders to all orders
   useEffect(() => {

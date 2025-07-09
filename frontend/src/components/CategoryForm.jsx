@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '@/common/axios';
 
 const CategoryForm = () => {
   const [formData, setFormData] = useState({
@@ -13,7 +13,7 @@ const CategoryForm = () => {
   // Fetch all categories
   const fetchCategories = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/categories');
+      const response = await api.get('/categories');
       setCategories(response.data.categories || []);
     } catch (error) {
       console.error('Error fetching categories:', error);
@@ -37,14 +37,14 @@ const CategoryForm = () => {
     try {
       if (editingCategory) {
         // Update existing category
-        const response = await axios.put(
-          `http://localhost:5000/api/category/${editingCategory._id}`,
+        const response = await api.put(
+          `/category/${editingCategory._id}`,
           formData
         );
         setMessage(response.data.message || 'Category updated successfully!');
       } else {
         // Add new category
-        const response = await axios.post('http://localhost:5000/api/addCategory', formData);
+        const response = await api.post('/addCategory', formData);
         setMessage(response.data.message || 'Category added successfully!');
       }
 
@@ -68,7 +68,7 @@ const CategoryForm = () => {
       return;
     }
     try {
-      await axios.delete(`http://localhost:5000/api/category/${id}`);
+      await api.get(`/category/${id}`);
       setMessage('Category deleted successfully!');
       fetchCategories();
     } catch (error) {

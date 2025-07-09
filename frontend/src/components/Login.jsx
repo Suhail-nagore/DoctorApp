@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import api from '@/common/axios';
 
 const Login = () => {
   const [username, setUsername] = useState('');
@@ -12,7 +12,7 @@ const Login = () => {
     e.preventDefault(); // Prevent form submission
 
     try {
-      const response = await axios.post('http://localhost:5000/api/login', {
+      const response = await api.post('/login', {
         username,
         password,
       });

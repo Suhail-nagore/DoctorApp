@@ -4,7 +4,6 @@ import Modals from "../Models";
 import { Input } from "@/components/ui/input";
 import { DateRangePicker } from "react-date-range";
 import { enGB } from "date-fns/locale";
-import axios from "axios";
 import { useDispatch, useSelector } from 'react-redux';
 import { 
   fetchAllUnbilled, 
@@ -40,7 +39,7 @@ const Unbilled = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const doctorsResponse = await axios.get("http://localhost:5000/api/doctors");
+        const doctorsResponse = await api.get("/doctors");
         setDoctors(doctorsResponse.data.doctors || []);
         dispatch(fetchAllUnbilled());
       } catch (error) {
@@ -82,7 +81,7 @@ const Unbilled = () => {
         }
       } else {
         // If still unbilled, just update the unbilled record
-        await axios.put(`http://localhost:5000/api/unbilled/${orderId}`, formData);
+        await api.put(`/unbilled/${orderId}`, formData);
         setEditOrderData(null);
         dispatch(fetchAllUnbilled());
         toast.success("Unbilled order updated successfully");

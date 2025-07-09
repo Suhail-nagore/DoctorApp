@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchDoctors } from "../store/doctor";
-import axios from "axios";
+import api from '@/common/axios';;
 
 const Doctor = () => {
   const navigate = useNavigate();
@@ -22,7 +22,7 @@ const Doctor = () => {
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this doctor?")) {
       try {
-        await axios.delete(`http://localhost:5000/api/doctor/${id}`);
+        await api.get(`/doctor/${id}`);
         alert("Doctor deleted successfully!");
         dispatch(fetchDoctors());
       } catch (error) {

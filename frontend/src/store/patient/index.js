@@ -1,12 +1,12 @@
+import api from '@/common/axios';
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
 
 // Thunk to fetch patients by phone number
 export const fetchPatients = createAsyncThunk(
   'patient/fetchPatients',
   async (phoneNo) => {
     try {
-      const response = await axios.get(`http://localhost:5000/api/patients?phoneNo=${phoneNo}`);
+      const response = await api.get(`/patients?phoneNo=${phoneNo}`);
       return response.data.patients || [];
     } catch (error) {
       console.error('Error fetching patients:', error);
@@ -20,7 +20,7 @@ export const fetchAllPatients = createAsyncThunk(
   'patient/fetchAllPatients',
   async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/allPatients');
+      const response = await api.get('/allPatients');
       return response.data.patients || [];
     } catch (error) {
       console.error('Error fetching all patients:', error);
@@ -34,7 +34,7 @@ export const addPatient = createAsyncThunk(
   'patient/addPatient',
   async (patientData, { rejectWithValue }) => {
     try {
-      const response = await axios.post('http://localhost:5000/api/patient/add', patientData);
+      const response = await api.post('/patient/add', patientData);
       return response.data; // Assuming the response returns the added patient or success message
     } catch (error) {
       console.error('Error adding patient:', error);
@@ -48,7 +48,7 @@ export const checkPatientByPhone = createAsyncThunk(
   'patient/checkPatientByPhone',
   async (phoneNo) => {
     try {
-      const response = await axios.get(`http://localhost:5000/api/checkPatient?phoneNo=${phoneNo}`);
+      const response = await api.get(`/checkPatient?phoneNo=${phoneNo}`);
       return response.data; // Expecting response like { message: "Patient exists", isNew: false }
     } catch (error) {
       console.error('Error checking patient by phone:', error);

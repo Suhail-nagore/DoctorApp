@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import { useLocation } from 'react-router-dom';
+import api from '@/common/axios';
 
 const DoctorForm = () => {
   const location = useLocation();
@@ -36,11 +36,11 @@ const DoctorForm = () => {
       let response;
       if (doctorId) {
         // Update Doctor
-        response = await axios.put(`http://localhost:5000/api/doctor/${doctorId}`, formData);
+        response = await api.put(`/doctor/${doctorId}`, formData);
         setMessage(response.data.message || 'Doctor updated successfully!');
       } else {
         // Add New Doctor
-        response = await axios.post('http://localhost:5000/api/doctor/add', formData);
+        response = await api.post('/doctor/add', formData);
         setMessage(response.data.message || 'Doctor added successfully!');
         setFormData({
           name: '',

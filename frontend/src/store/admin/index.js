@@ -1,5 +1,5 @@
+import { adminApi } from '@/common/axios';
 import { createSlice } from '@reduxjs/toolkit';
-import axios from 'axios';
 
 const initialState = {
   token: null,
@@ -35,7 +35,7 @@ export const login = (username, password) => async (dispatch) => {
   // alert(username)
   dispatch(loginRequest());
   try {
-    const response = await axios.post('http://localhost:5000/admin/api/login', {
+    const response = await adminApi.post('/login', {
       username:username,
       password:password
     },{

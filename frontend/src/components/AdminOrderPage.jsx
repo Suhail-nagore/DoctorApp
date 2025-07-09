@@ -7,7 +7,7 @@ import { format } from "date-fns";
 import { fetchAllOrders, updateOrder } from "../store/order";
 import { useDispatch, useSelector } from "react-redux";
 import ModalEditForm from "./ModalEditForm";
-import axios from "axios";
+import api from '@/common/axios';;
 import { DateRangePicker } from "react-date-range";
 import { enGB } from "date-fns/locale";
 
@@ -62,12 +62,12 @@ const AdminOrdersPage = () => {
   useEffect(() => {
     const fetchDoctors = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/doctors");
-        const data = await response.json();
-        setDoctors(data.doctors || []);
+        const response = await api.get("/doctors");
+        setDoctors(response.data.doctors || []);
       } catch (error) {
         console.error("Error fetching doctors:", error);
       }
+
     };
 
     dispatch(fetchAllOrders());
@@ -120,49 +120,48 @@ const AdminOrdersPage = () => {
   };
 
   const handleDeleteOrder = async (orderId) => {
-    const confirmation = window.confirm("Are you sure you want to delete this order?");
-    if (confirmation) {
-      try {
-        const response = await fetch(`http://localhost:5000/api/orders/${orderId}`, {
-          method: "DELETE",
-        });
-  
-        if (response.ok) {
-          alert("Order deleted successfully!");
-          setOrders(orders.filter((order) => order._id !== orderId));
-          // dispatch(fetchAllOrders());
-          window.location.reload(); // Reload the page after deleting the order
-        } else {
-          alert("Failed to delete the order.");
-        }
-      } catch (error) {
-        console.error("Error deleting the order:", error);
-      }
-    }
-  };
-  
-  const handleDeleteSelected = async () => {
-    const confirmation = window.confirm("Are you sure you want to delete the selected orders?");
-    if (confirmation) {
-      try {
-        for (let orderId of selectedOrders) {
-          const response = await fetch(`http://localhost:5000/api/orders/${orderId}`, {
-            method: "DELETE",
-          });
-  
-          if (response.ok) {
-            setOrders(orders.filter((order) => order._id !== orderId));
-          }
-        }
-        alert("Selected orders deleted successfully!");
-        resetDateFilter();
+  const confirmation = window.confirm("Are you sure you want to delete this order?");
+  if (confirmation) {
+    try {
+      const response = await api.delete(`/orders/${orderId}`);
+
+      if (response.status === 200 || response.status === 204) {
+        alert("Order deleted successfully!");
+        setOrders(orders.filter((order) => order._id !== orderId));
         // dispatch(fetchAllOrders());
-        window.location.reload(); // Reload the page after deleting the selected orders
-      } catch (error) {
-        console.error("Error deleting selected orders:", error);
+        window.location.reload(); // Reload the page after deleting the order
+      } else {
+        alert("Failed to delete the order.");
       }
+    } catch (error) {
+      console.error("Error deleting the order:", error);
+      alert("Something went wrong while deleting.");
     }
-  };
+  }
+};
+  
+const handleDeleteSelected = async () => {
+  const confirmation = window.confirm("Are you sure you want to delete the selected orders?");
+  if (confirmation) {
+    try {
+      for (let orderId of selectedOrders) {
+        const response = await api.delete(`/orders/${orderId}`);
+
+        if (response.status === 200 || response.status === 204) {
+          setOrders((prevOrders) => prevOrders.filter((order) => order._id !== orderId));
+        }
+      }
+
+      alert("Selected orders deleted successfully!");
+      resetDateFilter();
+      // dispatch(fetchAllOrders());
+      window.location.reload(); // Reload the page after deleting the selected orders
+    } catch (error) {
+      console.error("Error deleting selected orders:", error);
+      alert("Something went wrong while deleting selected orders.");
+    }
+  }
+};
   
 
   const handleSelectOrder = (orderId) => {

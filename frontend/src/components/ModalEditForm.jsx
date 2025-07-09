@@ -4,7 +4,7 @@ import { fetchDoctors } from "../store/doctor";
 import { fetchCategories } from '../store/categories';
 import {  fetchSubcategoryDetail } from '../store/subcategories';
 
-import axios from 'axios';
+import api from "@/common/axios";
 
 const ModalEditForm = ({ isOpen, onClose, onSubmit, initialData }) => {
   const dispatch = useDispatch();
@@ -156,8 +156,8 @@ const ModalEditForm = ({ isOpen, onClose, onSubmit, initialData }) => {
       }
 
       try {
-        const response = await axios.get(
-          `http://localhost:5000/api/subcategory?category=${formData.category}`
+        const response = await api.get(
+          `/subcategory?category=${formData.category}`
         );
         setFilteredSubcategories(response.data.subcategories); // Update subcategories based on category
       } catch (error) {

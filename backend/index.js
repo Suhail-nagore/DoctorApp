@@ -4,6 +4,7 @@ const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const nodeSchedule = require("node-schedule");
 const path = require("path");
+require("dotenv").config();
 const { generateExcelReport } = require("./controller/generateExcel");
 
 // Importing Routes
@@ -20,12 +21,12 @@ const unbilledRouter = require("./routes/unbilled-router");
 const operatorRouter = require("./routes/operator-router");
 
 const app = express();
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 
 // MongoDB Connection
 mongoose
   // .connect("mongodb+srv://dramansinghal2004:9vSxsK2vv2DGQfha@cluster0.fo989yl.mongodb.net/DoctorApp")
-  .connect("mongodb+srv://armaandoctorapp:armaan123@cluster0.pojwcqp.mongodb.net/Doctorapplication")
+  .connect(process.env.MONGODB_URI)
   .then(() => console.log("MongoDB connected"))
   .catch((error) => console.error("Error connecting to MongoDB:", error));
 

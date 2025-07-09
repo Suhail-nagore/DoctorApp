@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { toast } from "react-toastify";
+import api from "@/common/axios";
 
 const Operator = () => {
   const [operators, setOperators] = useState([]);
@@ -16,7 +16,7 @@ const Operator = () => {
 
   const fetchOperators = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/api/operators");
+      const response = await api.get("/operators");
       setOperators(response.data);
     } catch (error) {
       toast.error("Failed to fetch operators");
@@ -26,7 +26,7 @@ const Operator = () => {
   const handleAddOperator = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("http://localhost:5000/api/operators", newOperator);
+      await api.post("/operators", newOperator);
       toast.success("Operator added successfully");
       setIsAddingOperator(false);
       setNewOperator({ username: "", password: "" });
@@ -39,7 +39,7 @@ const Operator = () => {
   const handleDeleteOperator = async (id) => {
     if (window.confirm("Are you sure you want to delete this operator?")) {
       try {
-        await axios.delete(`http://localhost:5000/api/operators/${id}`);
+        await api.get(`/operators/${id}`);
         toast.success("Operator deleted successfully");
         fetchOperators();
       } catch (error) {
@@ -51,7 +51,7 @@ const Operator = () => {
   const handleChangePassword = async (e) => {
     e.preventDefault();
     try {
-      await axios.put(`http://localhost:5000/api/operators/${selectedOperator._id}/password`, {
+      await api.put(`/operators/${selectedOperator._id}/password`, {
         newPassword
       });
       toast.success("Password changed successfully");
