@@ -39,7 +39,8 @@ const Operator = () => {
   const handleDeleteOperator = async (id) => {
     if (window.confirm("Are you sure you want to delete this operator?")) {
       try {
-        await api.get(`/operators/${id}`);
+        // await api.get(`/operators/${id}`); Changed wrong operator delete logic- Armaan Siddiqui
+        await api.delete(`/operators/${id}`);
         toast.success("Operator deleted successfully");
         fetchOperators();
       } catch (error) {

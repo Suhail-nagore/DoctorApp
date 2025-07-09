@@ -22,7 +22,8 @@ const Doctor = () => {
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this doctor?")) {
       try {
-        await api.get(`/doctor/${id}`);
+        // await api.get(`/doctor/${id}`); Removed wrong logic in deleting doctor- Armaan Siddiqui
+        await api.delete(`/doctor/${id}`);
         alert("Doctor deleted successfully!");
         dispatch(fetchDoctors());
       } catch (error) {

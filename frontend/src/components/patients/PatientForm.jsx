@@ -226,6 +226,13 @@ const PatientForm = () => {
       return;
     }
 
+    // Prevent submit if if discount > referralFee - Armaan Siddiqui
+    if (parseFloat(formData.discount) > parseFloat(formData.referralFee || 0)) {
+      toast.error("Discount cannot exceed referral fee.");
+      return;
+    }
+
+
     // Check if required fields are filled
     if (
       !formData.phoneNo || 
