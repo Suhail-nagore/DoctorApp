@@ -41,15 +41,21 @@ const AdminCollection = () => {
       });
 
       // Calculate totals
+      //Changes Calculate total logic for handling split(Online + Cash)-Armaan Siddiqui
       if (filteredOrders.length > 0) {
-        const cashAmount = filteredOrders
-          .filter((order) => order.paymentMode === "Cash")
-          .reduce((acc, order) => acc + order.finalPayment, 0);
+        let cashAmount = 0;
+        let onlineAmount = 0;
 
-        const onlineAmount = filteredOrders
-          .filter((order) => order.paymentMode === "Online")
-          .reduce((acc, order) => acc + order.finalPayment, 0);
-
+        filteredOrders.forEach((order) => {
+          if (order.paymentMode === "Cash") {
+            cashAmount += order.finalPayment;
+          } else if (order.paymentMode === "Online") {
+            onlineAmount += order.finalPayment;
+          } else if (order.paymentMode === "Online + Cash") {
+            cashAmount += order.cash ?? 0;
+            onlineAmount += order.online ?? 0;
+          }
+        });
         const overallTotal = cashAmount + onlineAmount;
 
         setTotals({ cashAmount, onlineAmount, overallTotal });
