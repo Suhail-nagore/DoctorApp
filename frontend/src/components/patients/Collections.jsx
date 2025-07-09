@@ -17,8 +17,7 @@ const Collections = () => {
     dispatch(fetchAllOrders());
   }, [dispatch]);
 
-  // Enhanced hook for handling online + cash collections and splits
-  // Armaan Siddiqui
+  
   useEffect(() => {
     if (allOrders && allOrders.length > 0) {
       const now = new Date();
