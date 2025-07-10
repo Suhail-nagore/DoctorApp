@@ -45,7 +45,8 @@ export const deleteUnbilled = createAsyncThunk(
   'unbilled/deleteUnbilled',
   async (orderId, { rejectWithValue }) => {
     try {
-      await api.get(`/unbilled/${orderId}`);
+      // replaced get with delete- Armaan Siddiqui
+      await api.delete(`/unbilled/${orderId}`);
       return orderId;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || 'Failed to delete unbilled record');

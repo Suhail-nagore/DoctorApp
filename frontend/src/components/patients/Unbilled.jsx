@@ -15,6 +15,7 @@ import { toast } from "react-toastify";
 import { placeOrder } from '../../store/order';
 import { useNavigate } from "react-router-dom";
 import ModalEditForms from "../ModalEditForms";
+import api from '@/common/axios';;
 
 const Unbilled = () => {
   const dispatch = useDispatch();
@@ -96,8 +97,14 @@ const Unbilled = () => {
     const confirmation = window.confirm("Are you sure you want to delete this unbilled order?");
     if (confirmation) {
       try {
-        await dispatch(deleteUnbilled(orderId));
-        toast.success("Order deleted successfully");
+        const result = await dispatch(deleteUnbilled(orderId));
+        if (result.meta.requestStatus === "fulfilled") {
+          toast.success("Order deleted successfully");
+        } else {
+          toast.error("Failed to delete the order");
+          console.error("Delete failed:", result.payload || result.error.message);
+        }
+
       } catch (error) {
         console.error("Error deleting order:", error);
         toast.error("Failed to delete the order");

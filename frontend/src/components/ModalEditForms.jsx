@@ -289,7 +289,9 @@ const handleSubmit = async (e) => {
 
   try {
     if (initialData?._id) {
-      await api.get(`/unbilled/${initialData._id}`);
+      await api.get(`/fetchUnbilledOrderById/${initialData._id}`);
+
+
     }
     const orderData = {
       ...formData,
@@ -304,6 +306,9 @@ const handleSubmit = async (e) => {
     };
     const orderResponse = await dispatch(placeOrder(orderData));
     if (placeOrder.fulfilled.match(orderResponse)) {
+      if (initialData?._id) {
+        await api.delete(`/unbilled/${initialData._id}`);
+      }
       navigate("/print-report"); //added reroute for print report- Armaan Siddiqui
       onClose?.();
     }
