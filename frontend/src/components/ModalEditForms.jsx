@@ -67,7 +67,6 @@ const ModalEditForms = ({ isOpen, onClose, onSubmit, initialData }) => {
         discount: initialData.discount || "",
         finalPayment: initialData.finalPayment || "",
         paymentMode: initialData.paymentMode || "",
-        referralFee: initialData.referralFee || "",
         
         // Added fields for online + cash - Armaan Siddiqui
         online: initialData.online || "",
