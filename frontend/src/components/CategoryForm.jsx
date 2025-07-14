@@ -64,11 +64,11 @@ const CategoryForm = () => {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this subcategory?')) {
+    if (!window.confirm('Are you sure you want to delete this Category?')) {
       return;
     }
     try {
-      await api.get(`/category/${id}`);
+      await api.delete(`/category/${id}`);
       setMessage('Category deleted successfully!');
       fetchCategories();
     } catch (error) {
