@@ -68,6 +68,7 @@ const CategoryForm = () => {
       return;
     }
     try {
+      // api.get was used instead of api.delete- Armaan Siddiqui
       await api.delete(`/category/${id}`);
       setMessage('Category deleted successfully!');
       fetchCategories();
